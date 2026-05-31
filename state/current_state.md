@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Wired App.jsx useState lazy initializer to read tasks from localStorage via loadFromStorage("kanban_tasks", INITIAL_TASKS); save not yet wired.
+last_change: Added useEffect in App.jsx to sync tasks to localStorage via saveToStorage on every change; persistence now fully operational for all task mutations.
 ---
 
 ## System Purpose

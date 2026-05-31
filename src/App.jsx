@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Board from './components/Board';
 import { INITIAL_TASKS } from './data/mockData';
-import { loadFromStorage } from './utils/storage';
+import { loadFromStorage, saveToStorage } from './utils/storage';
 
 function App() {
   const [tasks, setTasks] = useState(() => loadFromStorage("kanban_tasks", INITIAL_TASKS));
   const [showAgenda, setShowAgenda] = useState(true);
+
+  useEffect(() => {
+    saveToStorage("kanban_tasks", tasks);
+  }, [tasks]);
 
   return (
     <div className="min-h-screen bg-gray-100">
