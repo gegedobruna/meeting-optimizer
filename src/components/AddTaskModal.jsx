@@ -14,7 +14,9 @@ export default function AddTaskModal({ columnName, onAdd, onClose }) {
       title,
       assignee,
       priority,
-      column: columnName
+      column: columnName,
+      meetingRequest: null,
+      description: "",
     });
     // onClose is called in Column.jsx when onAdd is called, or we can just call it here.
     // The instructions say: "Then call onClose". I will call both.
