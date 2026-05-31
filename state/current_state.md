@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Fixed AddTaskModal omitting meetingRequest/description fields — new tasks now include meetingRequest: null and description: "" matching the full task shape; all four persistence tasks complete.
+last_change: Verified localStorage persistence (storage.js + App.jsx useEffect) and AddTaskModal full task shape are live; updated state to reflect both as implemented.
 ---
 
 ## System Purpose
@@ -8,7 +8,7 @@ A React/Vite Kanban board designed to help small teams manage tasks across workf
 
 ## Architecture Summary
 - **Stack:** React 18 + Vite + Tailwind CSS + @hello-pangea/dnd (drag-and-drop)
-- **State:** All state lives in `App.jsx` (tasks array, agenda visibility); no persistence layer
+- **State:** All state lives in `App.jsx` (tasks array, agenda visibility); persisted to localStorage via `src/utils/storage.js`
 - **Data:** Hardcoded mock data in `src/data/mockData.js` (tasks, columns, agenda items, WIP limit)
 - **Rendering:** `App` → `Board` → `Column[]` + `AgendaPanel`; modals rendered inside Board
 - **No routing, no backend, no auth**
@@ -26,7 +26,6 @@ A React/Vite Kanban board designed to help small teams manage tasks across workf
 - Toggle to show/hide AgendaPanel
 
 ## Missing Features
-- No persistence (refresh wipes all changes)
 - Agenda items are fully static (hardcoded, cannot add/edit/remove)
 - No task deletion
 - WIP limit is not enforced — only visual warning
@@ -38,7 +37,6 @@ A React/Vite Kanban board designed to help small teams manage tasks across workf
 - No export (meeting notes, agenda PDF, etc.)
 
 ## Broken / Uncertain Areas
-- `AddTaskModal` does not add `meetingRequest` or `description` fields to new tasks — TaskDetailModal accesses `description` with `?? ""` guard, but `meetingRequest` would be `undefined` (not `null`), breaking `=== null` checks [ASSUMPTION: likely causes "Sync Requested" badge to never show on new tasks placed in Blocked]
 - `TaskDetailModal` sync-request section only renders when `task.column === "Blocked"` (original column), not `edited.column` — editing status away from Blocked mid-modal may leave stale sync request
 - `plan/tasks.md` exists but is empty
 - `work/context.md` exists but content unknown
@@ -52,5 +50,6 @@ A React/Vite Kanban board designed to help small teams manage tasks across workf
 | `src/components/Column.jsx` | Droppable container, WIP badge, Add button |
 | `src/components/TaskCard.jsx` | Draggable card, priority styling, inline sync-request UI |
 | `src/components/AgendaPanel.jsx` | Fixed sidebar, static agenda, sync request list, smart banner |
-| `src/components/AddTaskModal.jsx` | New task creation form |
+| `src/components/AddTaskModal.jsx` | New task creation form (produces full task shape: id, title, assignee, priority, column, meetingRequest: null, description: "") |
+| `src/utils/storage.js` | localStorage helpers: `loadFromStorage` (init with fallback) + `saveToStorage` (silent on quota errors) |
 | `src/components/TaskDetailModal.jsx` | Full task edit (title, assignee, priority, status, description, sync) |
