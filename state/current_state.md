@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Added useEffect in App.jsx to sync tasks to localStorage via saveToStorage on every change; persistence now fully operational for all task mutations.
+last_change: Fixed AddTaskModal omitting meetingRequest/description fields — new tasks now include meetingRequest: null and description: "" matching the full task shape; all four persistence tasks complete.
 ---
 
 ## System Purpose
