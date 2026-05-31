@@ -4,7 +4,7 @@ import TaskCard from './TaskCard';
 import AddTaskModal from './AddTaskModal';
 import { WIP_LIMIT } from '../data/mockData';
 
-export default function Column({ columnName, tasks, addTask, onRequestMeeting, onOpenDetail }) {
+export default function Column({ columnName, tasks, addTask, onRequestMeeting, onOpenDetail, onDelete }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -35,7 +35,7 @@ export default function Column({ columnName, tasks, addTask, onRequestMeeting, o
             {...provided.droppableProps}
           >
             {tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index} onRequestMeeting={onRequestMeeting} onOpenDetail={onOpenDetail} />
+              <TaskCard key={task.id} task={task} index={index} onRequestMeeting={onRequestMeeting} onOpenDetail={onOpenDetail} onDelete={onDelete} />
             ))}
             {provided.placeholder}
           </div>

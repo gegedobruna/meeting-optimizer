@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { COLUMNS } from '../data/mockData';
 
-export default function TaskDetailModal({ task, onClose, onSave }) {
+export default function TaskDetailModal({ task, onClose, onSave, onDelete }) {
   const [edited, setEdited] = useState({ ...task });
 
   return (
@@ -97,7 +97,12 @@ export default function TaskDetailModal({ task, onClose, onSave }) {
 
         {/* Footer section */}
         <div className="flex justify-between items-center mt-2">
-          <span className="text-xs text-gray-300">{task.id}</span>
+          <button
+            className="text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2"
+            onClick={() => { onDelete(task.id); onClose(); }}
+          >
+            Delete Task
+          </button>
           <div className="flex gap-2">
             <button 
               className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2"
