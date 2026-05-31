@@ -1,7 +1,7 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 
-export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail }) {
+export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, onDelete }) {
   const [showInput, setShowInput] = useState(false);
   const [reasonValue, setReasonValue] = useState("");
 
@@ -39,8 +39,14 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail }
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onOpenDetail(task)}
-          className={`bg-white rounded-lg shadow-sm p-3 cursor-grab hover:shadow-md transition-shadow duration-150 ${getBorderColor(task.priority)} flex flex-col gap-1`}
+          className={`relative group bg-white rounded-lg shadow-sm p-3 cursor-grab hover:shadow-md transition-shadow duration-150 ${getBorderColor(task.priority)} flex flex-col gap-1`}
         >
+          <button
+            className="absolute top-1 right-1 hidden group-hover:flex items-center justify-center bg-red-100 hover:bg-red-500 text-red-500 hover:text-white rounded p-1 transition-colors text-xs leading-none"
+            onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+          >
+            ×
+          </button>
           <div className="font-medium text-sm text-gray-900">{task.title}</div>
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-gray-500">{task.assignee}</span>

@@ -32,6 +32,8 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda }) {
     ));
   };
 
+  const deleteTask = (taskId) => setTasks(prev => prev.filter(t => t.id !== taskId));
+
   const handleOpenDetail = (task) => setSelectedTask(task);
   const handleSaveTask = (updatedTask) => {
     setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
@@ -42,13 +44,14 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda }) {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex flex-row gap-4 overflow-x-auto p-6">
           {COLUMNS.map(columnName => (
-            <Column 
+            <Column
               key={columnName}
               columnName={columnName}
               tasks={tasks.filter(t => t.column === columnName)}
               addTask={addTask}
               onRequestMeeting={handleMeetingRequest}
               onOpenDetail={handleOpenDetail}
+              onDelete={deleteTask}
             />
           ))}
         </div>
@@ -57,6 +60,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda }) {
             task={selectedTask}
             onClose={() => setSelectedTask(null)}
             onSave={handleSaveTask}
+            onDelete={(taskId) => { deleteTask(taskId); setSelectedTask(null); }}
           />
         )}
       </DragDropContext>
