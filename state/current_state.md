@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Added src/utils/storage.js with safe loadFromStorage/saveToStorage helpers (JSON error handling, null guard, silent quota-exceeded catch); not yet wired to App.jsx state.
+last_change: Wired App.jsx useState lazy initializer to read tasks from localStorage via loadFromStorage("kanban_tasks", INITIAL_TASKS); save not yet wired.
 ---
 
 ## System Purpose

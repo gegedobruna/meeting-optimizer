@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import Board from './components/Board';
 import { INITIAL_TASKS } from './data/mockData';
+import { loadFromStorage } from './utils/storage';
 
 function App() {
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [tasks, setTasks] = useState(() => loadFromStorage("kanban_tasks", INITIAL_TASKS));
   const [showAgenda, setShowAgenda] = useState(true);
 
   return (
