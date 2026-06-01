@@ -2,48 +2,45 @@ import { Draggable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { canDeleteTask } from '../utils/permissions';
 import { getUsersByIds } from '../utils/users';
+import { TEAMS } from '../data/mockData';
 
-const getLeftBorder = (task) => {
-  if (task.column === "Blocked" && task.blockedSince) {
-    const hours = (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000;
-    if (hours > 48) return 'border-l-4 border-red-600 ring-2 ring-red-300 animate-pulse';
-    if (hours > 24) return 'border-l-4 border-orange-500';
-    return 'border-l-4 border-yellow-400';
-  }
-  switch (task.priority) {
-    case 'High':   return 'border-l-4 border-red-500';
-    case 'Medium': return 'border-l-4 border-yellow-400';
-    case 'Low':    return 'border-l-4 border-blue-400';
-    default:       return 'border-l-4 border-gray-400';
-  }
+const PRIORITY_PILL = {
+  Urgent: 'bg-red-500 text-white',
+  High:   'bg-orange-400 text-white',
+  Medium: 'bg-blue-400 text-white',
+  Low:    'bg-gray-200 text-gray-700',
 };
 
-const getBlockerBadge = (task) => {
-  if (task.column !== "Blocked" || !task.blockedSince) return null;
+const getEscalationRing = (task) => {
+  if (task.column !== "Blocked" || !task.blockedSince) return '';
   const hours = (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000;
-  if (hours > 72) return '⚠ 72h+';
-  if (hours > 48) return '⚠ 48h+';
-  return null;
+  if (hours > 48) return 'ring-2 ring-red-300 animate-pulse';
+  return '';
 };
 
-const getPriorityBadge = (priority) => {
-  switch (priority) {
-    case 'High':   return 'bg-red-100 text-red-700';
-    case 'Medium': return 'bg-yellow-100 text-yellow-700';
-    case 'Low':    return 'bg-blue-100 text-blue-700';
-    default:       return 'bg-gray-100 text-gray-700';
-  }
+const formatDue = (dueDate) => {
+  if (!dueDate) return 'No due date';
+  return 'Due ' + new Date(dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+const getTeamName = (assignedUserIds) => {
+  if (!assignedUserIds?.length) return null;
+  const team = TEAMS.find(t => t.memberIds.includes(assignedUserIds[0]));
+  return team?.name ?? null;
 };
 
 export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
   const [showInput, setShowInput] = useState(false);
-  const [reasonValue, setReasonValue] = useState("");
+  const [reasonValue, setReasonValue] = useState('');
 
-  const blockerBadge = getBlockerBadge(task);
+  const assignees  = getUsersByIds(task.assignedUserIds ?? []);
+  const teamName   = getTeamName(task.assignedUserIds);
+  const priorityPill = PRIORITY_PILL[task.priority] ?? 'bg-gray-200 text-gray-700';
+  const ring       = getEscalationRing(task);
 
   const handleConfirm = (e) => {
     e.stopPropagation();
-    if (reasonValue.trim() !== "") {
+    if (reasonValue.trim()) {
       onRequestMeeting(task.id, reasonValue);
       setShowInput(false);
     }
@@ -57,57 +54,86 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onOpenDetail(task)}
-          className={`relative group bg-white rounded-lg shadow-sm p-3 cursor-grab hover:shadow-md transition-shadow duration-150 ${getLeftBorder(task)} flex flex-col gap-1`}
+          className={`relative group bg-white rounded-xl shadow-sm p-3 cursor-grab hover:shadow-md transition-shadow duration-150 flex flex-col gap-1.5 ${ring}`}
         >
+          {/* Delete button — top left on hover */}
           {canDeleteTask(currentUser, task) && (
             <button
-              className="absolute top-1 right-1 hidden group-hover:flex items-center justify-center bg-red-100 hover:bg-red-500 text-red-500 hover:text-white rounded p-1 transition-colors text-xs leading-none"
+              className="absolute top-1.5 left-1.5 hidden group-hover:flex items-center justify-center bg-red-100 hover:bg-red-500 text-red-500 hover:text-white rounded p-1 transition-colors text-xs leading-none z-10"
               onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
             >
               ×
             </button>
           )}
 
-          <div className="font-medium text-sm text-gray-900">{task.title}</div>
-
-          {task.fromMeeting && (
-            <span className="self-start text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">
-              From Meeting
-            </span>
-          )}
-
-          {blockerBadge && (
-            <div className="text-xs font-semibold text-red-600 mt-0.5">{blockerBadge}</div>
-          )}
-
-          <div className="flex justify-between items-center mt-2 gap-2 min-w-0">
-            <div className="flex flex-col gap-0.5 min-w-0">
-              {getUsersByIds(task.assignedUserIds ?? []).length === 0 ? (
-                <span className="text-xs text-gray-300 italic">Unassigned</span>
-              ) : (
-                getUsersByIds(task.assignedUserIds ?? []).map(u => (
-                  <div key={u.id} className="flex items-center gap-1 min-w-0">
-                    <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-xs flex items-center justify-center font-bold shrink-0 leading-none">
-                      {u.avatar}
-                    </span>
-                    <span className="text-xs text-gray-600 truncate">{u.name}</span>
-                    <span className="text-xs bg-indigo-50 text-indigo-600 px-1 rounded shrink-0">{u.department}</span>
-                  </div>
-                ))
-              )}
-            </div>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${getPriorityBadge(task.priority)}`}>
+          {/* Priority badge — top right */}
+          <div className="flex justify-end">
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${priorityPill}`}>
               {task.priority}
             </span>
           </div>
 
-          {task.column === "Blocked" && (
-            <div className="mt-2 w-full" onClick={(e) => e.stopPropagation()}>
+          {/* Title */}
+          <p className="font-semibold text-sm text-gray-900 leading-snug">{task.title}</p>
+
+          {/* Description preview */}
+          {task.description ? (
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {task.description.length > 70
+                ? task.description.slice(0, 70) + '...'
+                : task.description}
+            </p>
+          ) : null}
+
+          {/* Team badge + due date */}
+          <div className="flex items-center gap-2 flex-wrap mt-0.5">
+            {teamName && (
+              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-medium">
+                {teamName}
+              </span>
+            )}
+            <span className="text-xs text-gray-400">{formatDue(task.dueDate)}</span>
+          </div>
+
+          {/* Bottom row: avatars + badges */}
+          <div className="flex items-center justify-between gap-2 mt-0.5">
+            <div className="flex items-center gap-1">
+              {assignees.length === 0 ? (
+                <span className="text-xs text-gray-300 italic">No assignees</span>
+              ) : (
+                assignees.map(u => (
+                  <span
+                    key={u.id}
+                    title={u.name}
+                    className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center shrink-0"
+                  >
+                    {u.avatar}
+                  </span>
+                ))
+              )}
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              {task.fromMeeting && (
+                <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
+                  From Meeting
+                </span>
+              )}
+              {task.column === 'Blocked' && (
+                <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-medium">
+                  Blocked
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Request Sync (Blocked column only) */}
+          {task.column === 'Blocked' && (
+            <div className="mt-1 w-full" onClick={(e) => e.stopPropagation()}>
               {task.meetingRequest == null ? (
                 <>
                   <button
                     onClick={(e) => { e.stopPropagation(); setShowInput(true); }}
-                    className="mt-2 text-xs text-orange-600 border border-orange-300 rounded px-2 py-1 hover:bg-orange-50 w-full"
+                    className="text-xs text-orange-600 border border-orange-300 rounded px-2 py-1 hover:bg-orange-50 w-full"
                   >
                     📅 Request Sync
                   </button>
@@ -130,7 +156,7 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
                   )}
                 </>
               ) : (
-                <div className="mt-2 text-xs bg-orange-100 text-orange-700 rounded px-2 py-1 w-full text-center">
+                <div className="text-xs bg-orange-100 text-orange-700 rounded px-2 py-1 w-full text-center">
                   📅 Sync Requested
                 </div>
               )}
