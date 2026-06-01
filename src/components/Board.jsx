@@ -65,6 +65,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
               key={columnName}
               columnName={columnName}
               tasks={tasks.filter(t => t.column === columnName)}
+              allTasks={tasks}
               addTask={addTask}
               onRequestMeeting={handleMeetingRequest}
               onOpenDetail={handleOpenDetail}

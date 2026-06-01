@@ -5,7 +5,7 @@ import AddTaskModal from './AddTaskModal';
 import { WIP_LIMIT } from '../data/mockData';
 import { canCreateTask } from '../utils/permissions';
 
-export default function Column({ columnName, tasks, addTask, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
+export default function Column({ columnName, tasks, allTasks, addTask, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -53,13 +53,14 @@ export default function Column({ columnName, tasks, addTask, onRequestMeeting, o
       )}
 
       {showModal && (
-        <AddTaskModal 
-          columnName={columnName} 
+        <AddTaskModal
+          columnName={columnName}
+          tasks={allTasks}
           onAdd={(task) => {
             addTask(task);
             setShowModal(false);
-          }} 
-          onClose={() => setShowModal(false)} 
+          }}
+          onClose={() => setShowModal(false)}
         />
       )}
     </div>
