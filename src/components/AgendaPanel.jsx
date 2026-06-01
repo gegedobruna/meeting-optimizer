@@ -1,65 +1,68 @@
-import { AGENDA_ITEMS } from '../data/mockData';
 import { getUsersByIds } from '../utils/users';
 
+const blockerHours = (task) =>
+  task.blockedSince ? (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000 : 0;
+
+const formatDue = (dueDate) => {
+  if (!dueDate) return 'No due date';
+  return 'Due ' + new Date(dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+};
+
 export default function AgendaPanel({ tasks }) {
-  const syncRequestedTasks = tasks.filter(t => t.meetingRequest !== null);
-  const tasksInReviewOrDone = tasks.filter(t => t.column === 'Review' || t.column === 'Done').length;
-  const allTasksInReviewOrDone = tasksInReviewOrDone === tasks.length && tasks.length > 0;
-
-  let banner = (
-    <div className="bg-gray-100 text-gray-800 p-3 rounded mb-6 text-sm font-medium">
-      Active tasks in progress
-    </div>
-  );
-
-  if (syncRequestedTasks.length > 0) {
-    banner = (
-      <div className="bg-orange-100 text-orange-700 text-xs rounded p-2 mt-3 mb-6">
-        ⚠ Sync requested for blocked tasks
-      </div>
-    );
-  } else if (allTasksInReviewOrDone) {
-    banner = (
-      <div className="bg-green-100 text-green-800 p-3 rounded mb-6 text-sm font-medium">
-        ✓ All tasks in Review/Done — consider skipping sync
-      </div>
-    );
-  }
+  const blocked    = tasks.filter(t => t.column === 'Blocked');
+  const inReview   = tasks.filter(t => t.column === 'Review' || t.column === 'Done').length;
+  const escalated  = blocked.filter(t => blockerHours(t) >= 24).length;
 
   return (
-    <div className="fixed top-0 right-0 h-full w-72 bg-white shadow-xl p-5 z-10 overflow-y-auto pt-20">
-      <h2 className="text-xl font-bold mb-4">Meeting Agenda</h2>
-      
-      {banner}
+    <div className="fixed top-0 right-0 h-full w-72 bg-white border-l border-gray-100 shadow-xl p-5 z-10 overflow-y-auto pt-6 flex flex-col gap-6">
 
-      <div className="flex flex-col gap-4">
-        {AGENDA_ITEMS.map(item => (
-          <div key={item.id} className="flex justify-between items-center border-b pb-2">
-            <div>
-              <div className="font-medium text-sm">{item.topic}</div>
-              <div className="text-xs text-gray-500">{item.owner}</div>
-            </div>
-            <div className="text-sm text-gray-500 whitespace-nowrap ml-2">
-              {item.minutes} min
-            </div>
-          </div>
-        ))}
+      {/* Header */}
+      <div>
+        <h2 className="text-base font-bold text-gray-900">Meeting agenda</h2>
+        <p className="text-xs text-gray-400 mt-0.5">Quick view of blockers and suggested syncs.</p>
       </div>
 
-      <h3 className="font-semibold text-sm mt-4 mb-2">Sync Requests</h3>
-      {syncRequestedTasks.length === 0 ? (
-        <div className="text-xs text-gray-400">No sync requests</div>
-      ) : (
-        syncRequestedTasks.map(task => (
-          <div key={task.id} className="border-l-4 border-orange-400 pl-2 py-1 mb-2">
-            <div className="text-sm font-medium">{task.title}</div>
-            <div className="text-xs text-gray-500">
-              {getUsersByIds(task.assignedUserIds ?? []).map(u => u.name).join(', ') || 'Unassigned'}
-            </div>
-            <div className="text-xs text-gray-600 italic">{task.meetingRequest}</div>
+      {/* Progress */}
+      <div>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Progress</p>
+        <p className="text-3xl font-bold text-gray-900">{inReview}/{tasks.length}</p>
+        <p className="text-xs text-gray-400 mt-0.5">Tasks in review or done</p>
+      </div>
+
+      {/* Blocker summary */}
+      <div>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Blocker Summary</p>
+        <p className="text-3xl font-bold text-gray-900">{blocked.length}</p>
+        <p className="text-xs text-gray-400 mt-0.5">Blocked tasks currently needing attention</p>
+      </div>
+
+      {/* Escalated blockers */}
+      <div>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Escalated Blockers</p>
+        <p className="text-3xl font-bold text-gray-900">{escalated}</p>
+        <p className="text-xs text-gray-400 mt-0.5">Tasks blocked for 24+ hours</p>
+      </div>
+
+      {/* Blocked task watchlist */}
+      <div>
+        <p className="text-sm font-semibold text-gray-700 mb-2">Blocked task watchlist</p>
+        {blocked.length === 0 ? (
+          <p className="text-xs text-gray-400">No blocked tasks.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {blocked.map(task => {
+              const assigneeCount = (task.assignedUserIds ?? []).length;
+              return (
+                <div key={task.id} className="bg-gray-50 rounded-lg p-3 flex flex-col gap-0.5">
+                  <p className="text-sm font-semibold text-gray-800 leading-snug">{task.title}</p>
+                  <p className="text-xs text-gray-400">{assigneeCount} assignee{assigneeCount !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-gray-400">{formatDue(task.dueDate)}</p>
+                </div>
+              );
+            })}
           </div>
-        ))
-      )}
+        )}
+      </div>
     </div>
   );
 }
