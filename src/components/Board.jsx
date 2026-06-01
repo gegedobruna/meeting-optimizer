@@ -138,8 +138,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
       {/* ── Columns — only this box scrolls horizontally ── */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div
-          className={`flex flex-row gap-3 p-4 overflow-x-auto pb-6 ${showAgenda ? 'pr-80' : ''}`}
-          style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(22,25,22,0.15) transparent' }}
+          className={`flex gap-2 p-3 pb-5 ${showAgenda ? 'pr-[296px]' : ''}`}
         >
           {COLUMNS.map(columnName => (
             <Column
