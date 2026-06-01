@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { USERS, TEAMS } from '../data/mockData';
 import { canViewTeams } from '../utils/permissions';
+import { getActiveTaskCount } from '../utils/users';
 
 const heatClass = (n) => {
   if (n > 3) return 'bg-red-500 text-white';
@@ -36,7 +37,7 @@ export default function Teams({ currentUser, tasks, onNavigate }) {
               <p className="text-xs text-gray-500 font-medium mb-2">In Progress workload — click to expand</p>
               <div className="flex gap-2 flex-wrap">
                 {members.map(member => {
-                  const count = tasks.filter(t => t.assignee === member.name && t.column === "In Progress").length;
+                  const count = getActiveTaskCount(member.id, tasks);
                   return (
                     <button
                       key={member.id}
@@ -53,7 +54,7 @@ export default function Teams({ currentUser, tasks, onNavigate }) {
 
             {/* Expanded member task list */}
             {members.filter(m => m.id === expanded).map(member => {
-              const memberTasks = tasks.filter(t => t.assignee === member.name);
+              const memberTasks = tasks.filter(t => t.assignedUserIds?.includes(member.id));
               return (
                 <div key={member.id} className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs font-semibold text-gray-700 mb-2">{member.name}'s tasks</p>

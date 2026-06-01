@@ -1,6 +1,7 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { canDeleteTask } from '../utils/permissions';
+import { getUsersByIds } from '../utils/users';
 
 const getLeftBorder = (task) => {
   if (task.column === "Blocked" && task.blockedSince) {
@@ -79,9 +80,23 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
             <div className="text-xs font-semibold text-red-600 mt-0.5">{blockerBadge}</div>
           )}
 
-          <div className="flex justify-between items-center mt-2">
-            <span className="text-xs text-gray-500">{task.assignee}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getPriorityBadge(task.priority)}`}>
+          <div className="flex justify-between items-center mt-2 gap-2 min-w-0">
+            <div className="flex flex-col gap-0.5 min-w-0">
+              {getUsersByIds(task.assignedUserIds ?? []).length === 0 ? (
+                <span className="text-xs text-gray-300 italic">Unassigned</span>
+              ) : (
+                getUsersByIds(task.assignedUserIds ?? []).map(u => (
+                  <div key={u.id} className="flex items-center gap-1 min-w-0">
+                    <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-xs flex items-center justify-center font-bold shrink-0 leading-none">
+                      {u.avatar}
+                    </span>
+                    <span className="text-xs text-gray-600 truncate">{u.name}</span>
+                    <span className="text-xs bg-indigo-50 text-indigo-600 px-1 rounded shrink-0">{u.department}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${getPriorityBadge(task.priority)}`}>
               {task.priority}
             </span>
           </div>

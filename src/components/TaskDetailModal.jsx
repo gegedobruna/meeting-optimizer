@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { COLUMNS } from '../data/mockData';
+import { COLUMNS, USERS } from '../data/mockData';
 import { canEditTask, canDeleteTask } from '../utils/permissions';
+import { getUsersByIds } from '../utils/users';
 
 export default function TaskDetailModal({ task, onClose, onSave, onDelete, currentUser }) {
   const [edited, setEdited] = useState({ ...task });
@@ -40,14 +41,46 @@ export default function TaskDetailModal({ task, onClose, onSave, onDelete, curre
 
         {/* Fields */}
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-gray-500 font-medium block mb-1">Assignee</label>
-            <input
-              className={fieldClass()}
-              value={edited.assignee}
-              onChange={(e) => setEdited({ ...edited, assignee: e.target.value })}
-              readOnly={!canEdit}
-            />
+          <div className="col-span-2">
+            <label className="text-xs text-gray-500 font-medium block mb-1">Assignees</label>
+            {/* Current assignee chips */}
+            <div className="flex flex-wrap gap-1 mb-2">
+              {getUsersByIds(edited.assignedUserIds ?? []).length === 0 ? (
+                <span className="text-xs text-gray-300 italic">Nobody assigned</span>
+              ) : (
+                getUsersByIds(edited.assignedUserIds ?? []).map(u => (
+                  <span key={u.id} className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 rounded-full">
+                    <span className="font-bold">{u.avatar}</span>
+                    {u.name}
+                    <span className="bg-indigo-100 px-1 rounded">{u.department}</span>
+                  </span>
+                ))
+              )}
+            </div>
+            {/* Checkbox picker */}
+            <div className={`border border-gray-200 rounded px-3 py-2 flex flex-col gap-1.5 ${!canEdit ? 'bg-gray-50 cursor-not-allowed' : ''}`}>
+              {USERS.map(u => (
+                <label key={u.id} className={`flex items-center gap-2 text-sm ${!canEdit ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
+                  <input
+                    type="checkbox"
+                    disabled={!canEdit}
+                    checked={(edited.assignedUserIds ?? []).includes(u.id)}
+                    onChange={(e) => {
+                      const ids = edited.assignedUserIds ?? [];
+                      setEdited({
+                        ...edited,
+                        assignedUserIds: e.target.checked
+                          ? [...ids, u.id]
+                          : ids.filter(id => id !== u.id),
+                      });
+                    }}
+                  />
+                  <span className="text-gray-700">{u.name}</span>
+                  <span className="text-xs text-gray-400">{u.title}</span>
+                  <span className="text-xs bg-indigo-50 text-indigo-600 px-1 rounded ml-auto">{u.department}</span>
+                </label>
+              ))}
+            </div>
           </div>
           <div>
             <label className="text-xs text-gray-500 font-medium block mb-1">Priority</label>

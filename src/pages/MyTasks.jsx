@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { COLUMNS } from '../data/mockData';
 import TaskDetailModal from '../components/TaskDetailModal';
+import { getUsersByIds } from '../utils/users';
 
 const COLUMN_BADGE = {
   "Backlog":     "bg-gray-100 text-gray-600",
@@ -31,7 +32,7 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [selectedTask,   setSelectedTask]   = useState(null);
 
-  const myTasks = tasks.filter(t => t.assignee === currentUser.name);
+  const myTasks = tasks.filter(t => t.assignedUserIds?.includes(currentUser.id));
 
   const filtered = myTasks.filter(t => {
     if (statusFilter   !== "All" && t.column   !== statusFilter)   return false;

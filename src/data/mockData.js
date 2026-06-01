@@ -1,20 +1,23 @@
 export const COLUMNS = ["Backlog","To Do","In Progress","Blocked","Review","Done"];
 export const WIP_LIMIT = 3; // applies only to "In Progress"
 
+// NOTE: If the board looks empty after this update, open DevTools →
+// Application → Local Storage → delete the "kanban_tasks" key, then hard-refresh.
+// Stale tasks stored before this migration still carry the old `assignee` string field.
 export const INITIAL_TASKS = [
-  {id:"t1",  title:"Plan monthly workflow review",                        assignee:"Gege Dobruna", priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t2",  title:"Prepare quarterly productivity report",               assignee:"Edda Smith",   priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t3",  title:"Update onboarding process documentation",             assignee:"Gege Dobruna", priority:"Low",    column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t4",  title:"Update task assignments for the week",                assignee:"Edda Smith",   priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t5",  title:"Organize weekly team meeting agenda",                 assignee:"Gege Dobruna", priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t6",  title:"Review current project priorities",                   assignee:"Edda Smith",   priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t7",  title:"Prepare client progress presentation",                assignee:"Gege Dobruna", priority:"Medium", column:"In Progress",  meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t8",  title:"Analyze workflow interruptions affecting productivity",assignee:"Edda Smith",   priority:"Low",    column:"In Progress",  meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t9",  title:"Waiting for client feedback on proposal",             assignee:"Gege Dobruna", priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t10", title:"Missing data for weekly report",                      assignee:"Edda Smith",   priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t11", title:"Review client presentation before submission",        assignee:"Gege Dobruna", priority:"High",   column:"Review",       meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t12", title:"Submit monthly productivity report",                  assignee:"Edda Smith",   priority:"Medium", column:"Done",         meetingRequest:null, description:"", blockedSince:null, dueDate:null},
-  {id:"t13", title:"Finalize client meeting agenda",                      assignee:"Gege Dobruna", priority:"High",   column:"Done",         meetingRequest:null, description:"", blockedSince:null, dueDate:null},
+  {id:"t1",  title:"Plan monthly workflow review",                        assignedUserIds:["u2"], priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t2",  title:"Prepare quarterly productivity report",               assignedUserIds:["u4"], priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t3",  title:"Update onboarding process documentation",             assignedUserIds:["u2"], priority:"Low",    column:"Backlog",      meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t4",  title:"Update task assignments for the week",                assignedUserIds:["u4"], priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t5",  title:"Organize weekly team meeting agenda",                 assignedUserIds:["u2"], priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t6",  title:"Review current project priorities",                   assignedUserIds:["u4"], priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t7",  title:"Prepare client progress presentation",                assignedUserIds:["u2"], priority:"Medium", column:"In Progress",  meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t8",  title:"Analyze workflow interruptions affecting productivity",assignedUserIds:["u4"], priority:"Low",    column:"In Progress",  meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t9",  title:"Waiting for client feedback on proposal",             assignedUserIds:["u2"], priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t10", title:"Missing data for weekly report",                      assignedUserIds:["u4"], priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t11", title:"Review client presentation before submission",        assignedUserIds:["u2"], priority:"High",   column:"Review",       meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t12", title:"Submit monthly productivity report",                  assignedUserIds:["u4"], priority:"Medium", column:"Done",         meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
+  {id:"t13", title:"Finalize client meeting agenda",                      assignedUserIds:["u2"], priority:"High",   column:"Done",         meetingRequest:null, description:"", blockedSince:null, dueDate:null, fromMeeting:false},
 ];
 
 export const AGENDA_ITEMS = [
@@ -31,12 +34,12 @@ export const ROLES = {
 };
 
 export const USERS = [
-  { id:"u1", name:"Alex Morgan",   email:"alex@mo.io",  password:"admin123",  role:ROLES.ADMIN,       teamId:"team1", avatar:"AM" },
-  { id:"u2", name:"Gege Dobruna",  email:"gege@mo.io",  password:"lead123",   role:ROLES.TEAM_LEAD,   teamId:"team1", avatar:"GD" },
-  { id:"u3", name:"Sara Chen",     email:"sara@mo.io",  password:"lead456",   role:ROLES.TEAM_LEAD,   teamId:"team2", avatar:"SC" },
-  { id:"u4", name:"Edda Smith",    email:"edda@mo.io",  password:"member123", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"ES" },
-  { id:"u5", name:"Marco Rivera",  email:"marco@mo.io", password:"member456", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"MR" },
-  { id:"u6", name:"Priya Patel",   email:"priya@mo.io", password:"member789", role:ROLES.TEAM_MEMBER, teamId:"team2", avatar:"PP" },
+  { id:"u1", name:"Alex Morgan",   email:"alex@mo.io",  password:"admin123",  role:ROLES.ADMIN,       teamId:"team1", avatar:"AM", title:"Engineering Manager",  department:"Engineering" },
+  { id:"u2", name:"Gege Dobruna",  email:"gege@mo.io",  password:"lead123",   role:ROLES.TEAM_LEAD,   teamId:"team1", avatar:"GD", title:"Team Lead",            department:"Engineering" },
+  { id:"u3", name:"Sara Chen",     email:"sara@mo.io",  password:"lead456",   role:ROLES.TEAM_LEAD,   teamId:"team2", avatar:"SC", title:"Product Lead",         department:"Product"     },
+  { id:"u4", name:"Edda Smith",    email:"edda@mo.io",  password:"member123", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"ES", title:"Senior Developer",     department:"Engineering" },
+  { id:"u5", name:"Marco Rivera",  email:"marco@mo.io", password:"member456", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"MR", title:"Frontend Developer",   department:"Engineering" },
+  { id:"u6", name:"Priya Patel",   email:"priya@mo.io", password:"member789", role:ROLES.TEAM_MEMBER, teamId:"team2", avatar:"PP", title:"QA Engineer",          department:"Design"      },
 ];
 
 export const TEAMS = [

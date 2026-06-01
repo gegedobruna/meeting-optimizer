@@ -4,7 +4,7 @@ export const canCreateTask = (user) =>
   user.role !== ROLES.TEAM_MEMBER;
 
 export const canEditTask = (user, task) =>
-  user.role === ROLES.ADMIN || user.role === ROLES.TEAM_LEAD || task.assignee === user.name;
+  user.role === ROLES.ADMIN || user.role === ROLES.TEAM_LEAD || task.assignedUserIds?.includes(user.id);
 
 export const canDeleteTask = (user, task) =>
   canEditTask(user, task);

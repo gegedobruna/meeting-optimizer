@@ -13,7 +13,7 @@ export default function Analytics({ currentUser, tasks, meetingRequests, onNavig
   // Throughput
   const doneTasks  = tasks.filter(t => t.column === "Done");
   const throughput = USERS
-    .map(u => ({ name: u.name, count: doneTasks.filter(t => t.assignee === u.name).length }))
+    .map(u => ({ name: u.name, count: doneTasks.filter(t => t.assignedUserIds?.includes(u.id)).length }))
     .filter(u => u.count > 0)
     .sort((a, b) => b.count - a.count);
   const maxDone = Math.max(...throughput.map(u => u.count), 1);

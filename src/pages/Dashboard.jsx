@@ -1,5 +1,6 @@
 import { USERS, TEAMS } from '../data/mockData';
 import { canViewTeams, canViewAnalytics } from '../utils/permissions';
+import { getActiveTaskCount } from '../utils/users';
 
 const METRIC_COLS = ["To Do", "In Progress", "Blocked", "Done"];
 
@@ -7,7 +8,7 @@ const blockerHours = (task) =>
   task.blockedSince ? (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000 : 0;
 
 export default function Dashboard({ currentUser, tasks, meetingRequests }) {
-  const myTasks      = tasks.filter(t => t.assignee === currentUser.name);
+  const myTasks      = tasks.filter(t => t.assignedUserIds?.includes(currentUser.id));
   const blockedAll   = tasks.filter(t => t.column === "Blocked" && t.blockedSince);
   const approved     = meetingRequests.filter(r => r.status === 'APPROVED');
   const pending      = meetingRequests.filter(r => r.status === 'PENDING');
@@ -54,17 +55,17 @@ export default function Dashboard({ currentUser, tasks, meetingRequests }) {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Team Workload</p>
           <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col gap-3">
             {teamMembers.map(member => {
-              const inProg = tasks.filter(t => t.assignee === member.name && t.column === "In Progress").length;
+              const active = getActiveTaskCount(member.id, tasks);
               return (
                 <div key={member.id} className="flex items-center gap-3 text-sm">
                   <span className="w-36 text-gray-700 truncate">{member.name}</span>
                   <div className="flex-1 bg-gray-100 rounded-full h-2">
                     <div
                       className="bg-blue-500 h-2 rounded-full transition-all"
-                      style={{ width: `${Math.min((inProg / 5) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((active / 5) * 100, 100)}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-400 w-16 text-right">{inProg} in prog.</span>
+                  <span className="text-xs text-gray-400 w-16 text-right">{active} active</span>
                 </div>
               );
             })}
