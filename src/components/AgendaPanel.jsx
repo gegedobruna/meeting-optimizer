@@ -1,5 +1,3 @@
-import { getUsersByIds } from '../utils/users';
-
 const blockerHours = (task) =>
   task.blockedSince ? (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000 : 0;
 
@@ -8,18 +6,40 @@ const formatDue = (dueDate) => {
   return 'Due ' + new Date(dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-export default function AgendaPanel({ tasks }) {
-  const blocked    = tasks.filter(t => t.column === 'Blocked');
-  const inReview   = tasks.filter(t => t.column === 'Review' || t.column === 'Done').length;
-  const escalated  = blocked.filter(t => blockerHours(t) >= 24).length;
+export default function AgendaPanel({ tasks, showAgenda, setShowAgenda }) {
+  const blocked   = tasks.filter(t => t.column === 'Blocked');
+  const inReview  = tasks.filter(t => t.column === 'Review' || t.column === 'Done').length;
+  const escalated = blocked.filter(t => blockerHours(t) >= 24).length;
+
+  // Collapsed state — small tab on the right edge
+  if (!showAgenda) {
+    return (
+      <button
+        onClick={() => setShowAgenda(true)}
+        className="fixed top-1/2 -translate-y-1/2 right-0 z-20 bg-white border border-gray-200 border-r-0 shadow-md rounded-l-lg px-2 py-3 flex flex-col items-center gap-1 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors"
+      >
+        <span className="text-xs font-semibold [writing-mode:vertical-rl] rotate-180 tracking-wide">Meeting Agenda</span>
+        <span className="text-xs">›</span>
+      </button>
+    );
+  }
 
   return (
-    <div className="fixed top-0 right-0 h-full w-72 bg-white border-l border-gray-100 shadow-xl p-5 z-10 overflow-y-auto pt-6 flex flex-col gap-6">
+    <div className="fixed top-0 right-0 h-full w-72 bg-white border-l border-gray-100 shadow-xl z-10 overflow-y-auto flex flex-col gap-6 pt-6 px-5 pb-5">
 
-      {/* Header */}
-      <div>
-        <h2 className="text-base font-bold text-gray-900">Meeting agenda</h2>
-        <p className="text-xs text-gray-400 mt-0.5">Quick view of blockers and suggested syncs.</p>
+      {/* Header + close button */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-base font-bold text-gray-900">Meeting agenda</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Quick view of blockers and suggested syncs.</p>
+        </div>
+        <button
+          onClick={() => setShowAgenda(false)}
+          className="text-gray-400 hover:text-gray-700 text-lg leading-none ml-2 mt-0.5 shrink-0"
+          title="Hide agenda"
+        >
+          ‹
+        </button>
       </div>
 
       {/* Progress */}

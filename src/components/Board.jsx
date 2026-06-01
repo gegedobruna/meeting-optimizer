@@ -65,12 +65,6 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
           <h1 className="text-2xl font-bold text-gray-900">Kanban workflow</h1>
           <p className="text-sm text-gray-500 mt-1">Review task status, blockers, and meeting-generated work.</p>
         </div>
-        <button
-          onClick={() => setShowAgenda(!showAgenda)}
-          className="border border-gray-200 text-gray-600 hover:bg-gray-100 rounded-lg px-4 py-2 text-sm font-medium shrink-0 mt-1"
-        >
-          {showAgenda ? "Hide Agenda" : "Show Agenda"}
-        </button>
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -100,7 +94,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
         )}
       </DragDropContext>
 
-      {showAgenda && <AgendaPanel tasks={tasks} />}
+      <AgendaPanel tasks={tasks} showAgenda={showAgenda} setShowAgenda={setShowAgenda} />
 
       {dragWarning && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded shadow-lg z-50 text-sm font-medium">
