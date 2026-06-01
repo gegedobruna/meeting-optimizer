@@ -7,10 +7,11 @@ import { COLUMNS, TEAMS, ROLES } from '../data/mockData';
 import { canDragTask } from '../utils/permissions';
 
 export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, currentUser }) {
-  const [selectedTask,  setSelectedTask]  = useState(null);
-  const [dragWarning,   setDragWarning]   = useState(null);
-  const [showAllTeams,  setShowAllTeams]  = useState(false);
-  const [adminTeamFilter, setAdminTeamFilter] = useState('all'); // 'all' | team id
+  const [selectedTask,     setSelectedTask]     = useState(null);
+  const [dragWarning,      setDragWarning]      = useState(null);
+  const [showAllTeams,     setShowAllTeams]     = useState(false);
+  const [adminTeamFilter,  setAdminTeamFilter]  = useState('all'); // 'all' | team id
+  const [isCompact,        setIsCompact]        = useState(false);
 
   const isAdmin  = currentUser.role === ROLES.ADMIN;
   const isLead   = currentUser.role === ROLES.TEAM_LEAD;
@@ -119,15 +120,38 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
             </div>
           )}
 
-          {/* Member: plain label, no control */}
+            {/* Member: plain label, no control */}
           {!isAdmin && !isLead && (
             <span className="text-sm font-medium text-gp-fl1">{myTeam?.name ?? 'All'}</span>
           )}
+
+          {/* Compact mode toggle */}
+          <div className="ml-auto flex items-center">
+            <button
+              onClick={() => setIsCompact(c => !c)}
+              title={isCompact ? 'Switch to full cards' : 'Switch to compact cards'}
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
+                isCompact
+                  ? 'bg-gp-midnight text-white border-gp-midnight'
+                  : 'bg-white text-gp-fl2 border-[rgba(22,25,22,0.12)] hover:text-gp-midnight hover:border-gp-fl3'
+              }`}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="shrink-0">
+                <rect x="0" y="1" width="13" height="2" rx="1" fill="currentColor"/>
+                <rect x="0" y="5.5" width="13" height="2" rx="1" fill="currentColor"/>
+                <rect x="0" y="10" width="13" height="2" rx="1" fill="currentColor"/>
+              </svg>
+              Compact
+            </button>
+          </div>
         </div>
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className={`flex flex-row gap-4 overflow-x-auto p-6 ${showAgenda ? 'pr-80' : ''}`}>
+        <div
+          className={`flex flex-row gap-4 p-6 overflow-x-auto pb-8 ${showAgenda ? 'pr-80' : ''}`}
+          style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(22,25,22,0.15) transparent' }}
+        >
           {COLUMNS.map(columnName => (
             <Column
               key={columnName}
@@ -139,6 +163,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
               onOpenDetail={t => setSelectedTask(t)}
               onDelete={deleteTask}
               currentUser={currentUser}
+              isCompact={isCompact}
             />
           ))}
         </div>

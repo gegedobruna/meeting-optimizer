@@ -1,7 +1,141 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { COLUMNS, USERS } from '../data/mockData';
 import { canEditTask, canDeleteTask } from '../utils/permissions';
 import { getUsersByIds } from '../utils/users';
+
+const PRIORITY_OPTIONS = ['Urgent', 'High', 'Medium', 'Low'];
+
+const PRIORITY_DOT = {
+  Urgent: 'bg-red-500',
+  High:   'bg-amber-500',
+  Medium: 'bg-blue-500',
+  Low:    'bg-slate-300',
+};
+
+const PRIORITY_PILL = {
+  Urgent: 'bg-red-50 text-red-600',
+  High:   'bg-amber-50 text-amber-600',
+  Medium: 'bg-blue-50 text-blue-600',
+  Low:    'bg-slate-100 text-slate-500',
+};
+
+// ─── Assignee Picker ─────────────────────────────────────────────────────────
+
+function AssigneePicker({ assignedUserIds, onChange, canEdit }) {
+  const [open,   setOpen]   = useState(false);
+  const [search, setSearch] = useState('');
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const assigned = getUsersByIds(assignedUserIds ?? []);
+  const extra    = assigned.length - 3;
+  const filtered = USERS.filter(u =>
+    u.name.toLowerCase().includes(search.toLowerCase()) ||
+    (u.title ?? '').toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggle = (uid) => {
+    const ids = assignedUserIds ?? [];
+    onChange(ids.includes(uid) ? ids.filter(id => id !== uid) : [...ids, uid]);
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      {/* Facepile + trigger */}
+      <button
+        type="button"
+        onClick={() => canEdit && setOpen(o => !o)}
+        className={`flex items-center gap-2 group ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}
+      >
+        <div className="flex -space-x-2">
+          {assigned.slice(0, 3).map(u => (
+            <span
+              key={u.id}
+              title={u.name}
+              className="w-7 h-7 rounded-full bg-gp-cream text-gp-midnight text-xs font-bold flex items-center justify-center ring-2 ring-white shrink-0"
+            >
+              {u.avatar}
+            </span>
+          ))}
+          {extra > 0 && (
+            <span className="w-7 h-7 rounded-full bg-gp-fl3 text-white text-xs font-bold flex items-center justify-center ring-2 ring-white shrink-0">
+              +{extra}
+            </span>
+          )}
+        </div>
+        {assigned.length === 0 && (
+          <span className="text-xs text-gp-fl3 italic">Nobody assigned</span>
+        )}
+        {canEdit && (
+          <span className="text-xs text-gp-coral opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+            {assigned.length === 0 ? '+ Add' : 'Edit'}
+          </span>
+        )}
+      </button>
+
+      {/* Floating dropdown */}
+      {open && (
+        <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-[rgba(22,25,22,0.15)] rounded-xl shadow-xl z-50 overflow-hidden">
+          {/* Search */}
+          <div className="p-2 border-b border-[rgba(22,25,22,0.08)]">
+            <input
+              autoFocus
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search people…"
+              className="w-full text-xs px-3 py-2 rounded-lg border border-[rgba(22,25,22,0.12)] bg-gp-sunrise text-gp-midnight placeholder-gp-fl3 focus:outline-none focus:ring-2 focus:ring-[#FF555F]/20 focus:border-gp-coral transition"
+            />
+          </div>
+          {/* List */}
+          <div className="max-h-56 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="text-xs text-gp-fl3 px-4 py-3">No results.</p>
+            ) : (
+              filtered.map(u => {
+                const checked = (assignedUserIds ?? []).includes(u.id);
+                return (
+                  <label
+                    key={u.id}
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-gp-sunrise cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggle(u.id)}
+                      className="rounded accent-[#FF555F] w-3.5 h-3.5 shrink-0"
+                    />
+                    <span className="w-6 h-6 rounded-full bg-gp-cream text-gp-midnight text-xs font-bold flex items-center justify-center shrink-0">
+                      {u.avatar}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-gp-midnight truncate">{u.name}</p>
+                      <p className="text-[10px] text-gp-fl3 truncate">{u.title}</p>
+                    </div>
+                    <span className="text-[10px] bg-gp-cream text-gp-fl2 px-1.5 py-0.5 rounded shrink-0">{u.department}</span>
+                  </label>
+                );
+              })
+            )}
+          </div>
+          {/* Footer summary */}
+          {assigned.length > 0 && (
+            <div className="px-3 py-2 border-t border-[rgba(22,25,22,0.08)] text-[10px] text-gp-fl3">
+              {assigned.length} assignee{assigned.length !== 1 ? 's' : ''} selected
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Drawer ───────────────────────────────────────────────────────────────────
 
 export default function TaskDetailModal({ task, onClose, onSave, onDelete, currentUser }) {
   const [edited, setEdited] = useState({ ...task });
@@ -9,183 +143,230 @@ export default function TaskDetailModal({ task, onClose, onSave, onDelete, curre
   const canEdit = canEditTask(currentUser, task);
   const canDel  = canDeleteTask(currentUser, task);
 
-  const fieldClass = (base = "") =>
-    `${base} border border-gray-200 rounded px-3 py-2 text-sm w-full ${!canEdit ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''}`;
+  const inputCls = (extra = '') =>
+    `w-full border border-[rgba(22,25,22,0.12)] rounded-lg px-3 py-2 text-sm text-gp-midnight placeholder-gp-fl3 focus:outline-none focus:ring-2 focus:ring-[#FF555F]/20 focus:border-gp-coral transition bg-white ${!canEdit ? 'opacity-50 cursor-not-allowed' : ''} ${extra}`;
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 flex flex-col gap-4">
+    <div className="fixed inset-0 z-50 flex">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-gp-midnight/40 backdrop-enter"
+        onClick={onClose}
+      />
 
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <input
-            className={`text-xl font-semibold border-b focus:border-gray-400 outline-none w-full pb-1 ${!canEdit ? 'border-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-200'}`}
-            value={edited.title}
-            onChange={(e) => setEdited({ ...edited, title: e.target.value })}
-            readOnly={!canEdit}
-          />
-          <span
-            className="text-gray-400 hover:text-gray-600 text-xl font-light cursor-pointer ml-4"
-            onClick={onClose}
-          >
-            ✕
-          </span>
-        </div>
+      {/* Drawer — right-anchored */}
+      <div className="absolute top-0 right-0 h-full w-[720px] max-w-[90vw] bg-white border-l-2 border-gp-midnight shadow-2xl flex flex-col drawer-enter">
 
-        {/* Read-only banner */}
-        {!canEdit && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded px-3 py-2">
-            You have read-only access to this task.
-          </div>
-        )}
-
-        {/* Fields */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <label className="text-xs text-gray-500 font-medium block mb-1">Assignees</label>
-            {/* Current assignee chips */}
-            <div className="flex flex-wrap gap-1 mb-2">
-              {getUsersByIds(edited.assignedUserIds ?? []).length === 0 ? (
-                <span className="text-xs text-gray-300 italic">Nobody assigned</span>
-              ) : (
-                getUsersByIds(edited.assignedUserIds ?? []).map(u => (
-                  <span key={u.id} className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 rounded-full">
-                    <span className="font-bold">{u.avatar}</span>
-                    {u.name}
-                    <span className="bg-indigo-100 px-1 rounded">{u.department}</span>
-                  </span>
-                ))
-              )}
-            </div>
-            {/* Checkbox picker */}
-            <div className={`border border-gray-200 rounded px-3 py-2 flex flex-col gap-1.5 ${!canEdit ? 'bg-gray-50 cursor-not-allowed' : ''}`}>
-              {USERS.map(u => (
-                <label key={u.id} className={`flex items-center gap-2 text-sm ${!canEdit ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
-                  <input
-                    type="checkbox"
-                    disabled={!canEdit}
-                    checked={(edited.assignedUserIds ?? []).includes(u.id)}
-                    onChange={(e) => {
-                      const ids = edited.assignedUserIds ?? [];
-                      setEdited({
-                        ...edited,
-                        assignedUserIds: e.target.checked
-                          ? [...ids, u.id]
-                          : ids.filter(id => id !== u.id),
-                      });
-                    }}
-                  />
-                  <span className="text-gray-700">{u.name}</span>
-                  <span className="text-xs text-gray-400">{u.title}</span>
-                  <span className="text-xs bg-indigo-50 text-indigo-600 px-1 rounded ml-auto">{u.department}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="text-xs text-gray-500 font-medium block mb-1">Priority</label>
-            <select
-              className={fieldClass()}
-              value={edited.priority}
-              onChange={(e) => setEdited({ ...edited, priority: e.target.value })}
-              disabled={!canEdit}
-            >
-              <option value="Urgent">Urgent</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-gray-500 font-medium block mb-1">Status</label>
-            <select
-              className={fieldClass()}
-              value={edited.column}
-              onChange={(e) => setEdited({ ...edited, column: e.target.value })}
-              disabled={!canEdit}
-            >
-              {COLUMNS.map(col => <option key={col} value={col}>{col}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-gray-500 font-medium block mb-1">Due Date</label>
+        {/* ── Sticky header ── */}
+        <div className="flex items-start gap-3 px-6 py-5 border-b border-[rgba(22,25,22,0.08)] shrink-0">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest mb-1">Task Detail</p>
             <input
-              type="date"
-              className={fieldClass()}
-              value={edited.dueDate ?? ""}
-              onChange={(e) => setEdited({ ...edited, dueDate: e.target.value || null })}
+              className={`text-xl font-bold w-full focus:outline-none border-b pb-0.5 transition ${
+                canEdit
+                  ? 'border-[rgba(22,25,22,0.15)] text-gp-midnight focus:border-gp-coral'
+                  : 'border-transparent text-gp-fl1 cursor-not-allowed'
+              }`}
+              value={edited.title}
+              onChange={e => setEdited({ ...edited, title: e.target.value })}
               readOnly={!canEdit}
             />
           </div>
+          <button
+            onClick={onClose}
+            className="text-gp-fl3 hover:text-gp-midnight text-2xl leading-none mt-1 shrink-0 transition-colors"
+          >
+            ×
+          </button>
         </div>
 
-        {/* Description */}
-        <div>
-          <label className="text-xs text-gray-500 font-medium block mb-1">Description</label>
-          <textarea
-            className={fieldClass("resize-none")}
-            rows={4}
-            placeholder="Add a description..."
-            value={edited.description ?? ""}
-            onChange={(e) => setEdited({ ...edited, description: e.target.value })}
-            readOnly={!canEdit}
-          />
-        </div>
+        {/* ── Scrollable body ── */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex h-full">
 
-        {/* Meeting Request */}
-        {task.column === "Blocked" && (
-          <div>
-            <label className="text-xs text-gray-500 font-medium block mb-1">Sync Request</label>
-            {edited.meetingRequest !== null ? (
-              <div className="flex items-center">
-                <span className="text-gray-600 italic text-sm">{edited.meetingRequest}</span>
-                {canEdit && (
-                  <button
-                    className="text-xs text-red-400 underline ml-2"
-                    onClick={() => setEdited({ ...edited, meetingRequest: null })}
-                  >
-                    Clear
-                  </button>
+            {/* Main content — 2/3 */}
+            <div className="flex-[2] border-r border-[rgba(22,25,22,0.08)] px-6 py-5 flex flex-col gap-5">
+
+              {/* Read-only banner */}
+              {!canEdit && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-lg px-3 py-2">
+                  You have read-only access to this task.
+                </div>
+              )}
+
+              {/* Description */}
+              <div>
+                <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Description</label>
+                <textarea
+                  className={inputCls('resize-none')}
+                  rows={7}
+                  placeholder="Add a description…"
+                  value={edited.description ?? ''}
+                  onChange={e => setEdited({ ...edited, description: e.target.value })}
+                  readOnly={!canEdit}
+                />
+              </div>
+
+              {/* Sync Request — only when blocked */}
+              {task.column === 'Blocked' && (
+                <div>
+                  <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Sync Request</label>
+                  {edited.meetingRequest !== null ? (
+                    <div className="flex items-start gap-2 bg-orange-50 border border-orange-100 rounded-lg px-3 py-2.5">
+                      <span className="text-sm text-orange-700 flex-1">{edited.meetingRequest}</span>
+                      {canEdit && (
+                        <button
+                          className="text-xs text-red-400 hover:text-red-600 underline shrink-0 transition-colors"
+                          onClick={() => setEdited({ ...edited, meetingRequest: null })}
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      className={inputCls()}
+                      placeholder="Request a sync — state reason"
+                      maxLength={80}
+                      value={edited.meetingRequest || ''}
+                      onChange={e => setEdited({ ...edited, meetingRequest: e.target.value || null })}
+                      readOnly={!canEdit}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Source tag */}
+              {task.fromMeeting && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-purple-50 text-purple-600 px-2.5 py-1 rounded-full font-medium border border-purple-100">
+                    From Meeting
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Metadata sidebar — 1/3 */}
+            <div className="flex-1 px-5 py-5 flex flex-col gap-5 bg-gp-sunrise/50">
+
+              {/* Priority */}
+              <div>
+                <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Priority</label>
+                <div className="flex flex-col gap-1">
+                  {PRIORITY_OPTIONS.map(p => (
+                    <button
+                      key={p}
+                      type="button"
+                      disabled={!canEdit}
+                      onClick={() => canEdit && setEdited({ ...edited, priority: p })}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all border ${
+                        edited.priority === p
+                          ? `${PRIORITY_PILL[p]} border-current/20`
+                          : 'text-gp-fl2 border-transparent hover:bg-gp-cream'
+                      } ${!canEdit ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${PRIORITY_DOT[p]}`} />
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Status</label>
+                <select
+                  className={inputCls()}
+                  value={edited.column}
+                  onChange={e => setEdited({ ...edited, column: e.target.value })}
+                  disabled={!canEdit}
+                >
+                  {COLUMNS.map(col => <option key={col} value={col}>{col}</option>)}
+                </select>
+              </div>
+
+              {/* Due Date */}
+              <div>
+                <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Due Date</label>
+                <input
+                  type="date"
+                  className={inputCls()}
+                  value={edited.dueDate ?? ''}
+                  onChange={e => setEdited({ ...edited, dueDate: e.target.value || null })}
+                  readOnly={!canEdit}
+                />
+              </div>
+
+              {/* Assignees */}
+              <div>
+                <label className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest block mb-2">Assignees</label>
+                <AssigneePicker
+                  assignedUserIds={edited.assignedUserIds ?? []}
+                  onChange={ids => setEdited({ ...edited, assignedUserIds: ids })}
+                  canEdit={canEdit}
+                />
+                {/* Chip list */}
+                {(edited.assignedUserIds ?? []).length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {getUsersByIds(edited.assignedUserIds ?? []).map(u => (
+                      <span
+                        key={u.id}
+                        className="inline-flex items-center gap-1 text-[11px] bg-gp-cream text-gp-midnight border border-[rgba(22,25,22,0.12)] px-2 py-0.5 rounded-full"
+                      >
+                        <span className="font-bold">{u.avatar}</span>
+                        {u.name}
+                        {canEdit && (
+                          <button
+                            className="ml-0.5 text-gp-fl3 hover:text-red-500 transition-colors text-xs leading-none"
+                            onClick={() => setEdited({
+                              ...edited,
+                              assignedUserIds: (edited.assignedUserIds ?? []).filter(id => id !== u.id)
+                            })}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
-            ) : (
-              <input
-                className={fieldClass()}
-                placeholder="Request a sync — state reason"
-                maxLength={80}
-                value={edited.meetingRequest || ""}
-                onChange={(e) => setEdited({ ...edited, meetingRequest: e.target.value || null })}
-                readOnly={!canEdit}
-              />
-            )}
+            </div>
           </div>
-        )}
+        </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center mt-2">
+        {/* ── Sticky footer ── */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[rgba(22,25,22,0.08)] bg-gp-sunrise/60 shrink-0">
           <div>
             {canDel && (
               <button
-                className="text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2"
+                className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
                 onClick={() => { onDelete(task.id); onClose(); }}
               >
-                Delete Task
+                Delete task
               </button>
             )}
           </div>
           <div className="flex gap-2">
             <button
-              className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2"
+              className="text-sm text-gp-fl2 hover:text-gp-midnight px-4 py-2 transition-colors"
               onClick={onClose}
             >
               Cancel
             </button>
             {canEdit && (
               <button
-                className="text-sm bg-gray-900 text-white rounded-lg px-4 py-2 hover:bg-gray-700"
+                className="text-sm bg-gp-midnight hover:bg-gp-fl1 text-white rounded-lg px-5 py-2 font-semibold transition-colors"
                 onClick={() => { onSave(edited); onClose(); }}
               >
-                Save Changes
+                Save changes
               </button>
             )}
           </div>

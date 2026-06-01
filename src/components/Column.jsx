@@ -5,10 +5,10 @@ import AddTaskModal from './AddTaskModal';
 import { WORKER_WIP_LIMIT } from '../data/mockData';
 import { canCreateTask } from '../utils/permissions';
 
-export default function Column({ columnName, tasks, allTasks, addTask, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
+export default function Column({ columnName, tasks, allTasks, addTask, onRequestMeeting, onOpenDetail, onDelete, currentUser, isCompact }) {
   const [showModal, setShowModal] = useState(false);
 
-  // ── Worker WIP computation (only matters for In Progress) ─────────────────
+  // ── Worker WIP computation ────────────────────────────────────────────────
   const countByUser = {};
   allTasks.filter(t => t.column === 'In Progress').forEach(t => {
     (t.assignedUserIds ?? []).forEach(uid => {
@@ -20,7 +20,6 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
   const atLimitIds    = Object.entries(countByUser)
     .filter(([, n]) => n === WORKER_WIP_LIMIT).map(([uid]) => uid);
 
-  // Banner config
   let banner = null;
   if (columnName === 'In Progress') {
     if (overloadedIds.length > 0) {
@@ -42,7 +41,7 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] min-w-[220px] max-w-[220px] p-3 flex flex-col gap-2">
+    <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] min-w-[300px] max-w-[350px] w-[300px] p-3 flex flex-col gap-2 shrink-0">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <span className="font-bold text-sm text-gp-midnight">{columnName}</span>
@@ -76,6 +75,7 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
                 onOpenDetail={onOpenDetail}
                 onDelete={onDelete}
                 currentUser={currentUser}
+                isCompact={isCompact}
               />
             ))}
             {provided.placeholder}
