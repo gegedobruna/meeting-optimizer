@@ -2,19 +2,19 @@ export const COLUMNS = ["Backlog","To Do","In Progress","Blocked","Review","Done
 export const WIP_LIMIT = 3; // applies only to "In Progress"
 
 export const INITIAL_TASKS = [
-  {id:"t1", title:"Plan monthly workflow review",                  assignee:"Gege", priority:"Medium", column:"Backlog", meetingRequest: null, description: ""},
-  {id:"t2", title:"Prepare quarterly productivity report",         assignee:"Edda", priority:"Medium", column:"Backlog", meetingRequest: null, description: ""},
-  {id:"t3", title:"Update onboarding process documentation",       assignee:"Gege", priority:"Low",    column:"Backlog", meetingRequest: null, description: ""},
-  {id:"t4", title:"Update task assignments for the week",          assignee:"Edda", priority:"High",   column:"To Do", meetingRequest: null, description: ""},
-  {id:"t5", title:"Organize weekly team meeting agenda",           assignee:"Gege", priority:"High",   column:"To Do", meetingRequest: null, description: ""},
-  {id:"t6", title:"Review current project priorities",             assignee:"Edda", priority:"High",   column:"To Do", meetingRequest: null, description: ""},
-  {id:"t7", title:"Prepare client progress presentation",          assignee:"Gege", priority:"Medium", column:"In Progress", meetingRequest: null, description: ""},
-  {id:"t8", title:"Analyze workflow interruptions affecting productivity", assignee:"Edda", priority:"Low",    column:"In Progress", meetingRequest: null, description: ""},
-  {id:"t9", title:"Waiting for client feedback on proposal",       assignee:"Gege", priority:"High",   column:"Blocked", meetingRequest: null, description: ""},
-  {id:"t10", title:"Missing data for weekly report",               assignee:"Edda", priority:"High",   column:"Blocked", meetingRequest: null, description: ""},
-  {id:"t11", title:"Review client presentation before submission", assignee:"Gege", priority:"High",   column:"Review", meetingRequest: null, description: ""},
-  {id:"t12", title:"Submit monthly productivity report",           assignee:"Edda", priority:"Medium", column:"Done", meetingRequest: null, description: ""},
-  {id:"t13", title:"Finalize client meeting agenda",               assignee:"Gege", priority:"High",   column:"Done", meetingRequest: null, description: ""},
+  {id:"t1",  title:"Plan monthly workflow review",                        assignee:"Gege Dobruna", priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null},
+  {id:"t2",  title:"Prepare quarterly productivity report",               assignee:"Edda Smith",   priority:"Medium", column:"Backlog",      meetingRequest:null, description:"", blockedSince:null},
+  {id:"t3",  title:"Update onboarding process documentation",             assignee:"Gege Dobruna", priority:"Low",    column:"Backlog",      meetingRequest:null, description:"", blockedSince:null},
+  {id:"t4",  title:"Update task assignments for the week",                assignee:"Edda Smith",   priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null},
+  {id:"t5",  title:"Organize weekly team meeting agenda",                 assignee:"Gege Dobruna", priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null},
+  {id:"t6",  title:"Review current project priorities",                   assignee:"Edda Smith",   priority:"High",   column:"To Do",        meetingRequest:null, description:"", blockedSince:null},
+  {id:"t7",  title:"Prepare client progress presentation",                assignee:"Gege Dobruna", priority:"Medium", column:"In Progress",  meetingRequest:null, description:"", blockedSince:null},
+  {id:"t8",  title:"Analyze workflow interruptions affecting productivity",assignee:"Edda Smith",   priority:"Low",    column:"In Progress",  meetingRequest:null, description:"", blockedSince:null},
+  {id:"t9",  title:"Waiting for client feedback on proposal",             assignee:"Gege Dobruna", priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null},
+  {id:"t10", title:"Missing data for weekly report",                      assignee:"Edda Smith",   priority:"High",   column:"Blocked",      meetingRequest:null, description:"", blockedSince:null},
+  {id:"t11", title:"Review client presentation before submission",        assignee:"Gege Dobruna", priority:"High",   column:"Review",       meetingRequest:null, description:"", blockedSince:null},
+  {id:"t12", title:"Submit monthly productivity report",                  assignee:"Edda Smith",   priority:"Medium", column:"Done",         meetingRequest:null, description:"", blockedSince:null},
+  {id:"t13", title:"Finalize client meeting agenda",                      assignee:"Gege Dobruna", priority:"High",   column:"Done",         meetingRequest:null, description:"", blockedSince:null},
 ];
 
 export const AGENDA_ITEMS = [

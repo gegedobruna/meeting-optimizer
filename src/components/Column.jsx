@@ -3,8 +3,9 @@ import { Droppable } from '@hello-pangea/dnd';
 import TaskCard from './TaskCard';
 import AddTaskModal from './AddTaskModal';
 import { WIP_LIMIT } from '../data/mockData';
+import { canCreateTask } from '../utils/permissions';
 
-export default function Column({ columnName, tasks, addTask, onRequestMeeting, onOpenDetail, onDelete }) {
+export default function Column({ columnName, tasks, addTask, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -35,19 +36,21 @@ export default function Column({ columnName, tasks, addTask, onRequestMeeting, o
             {...provided.droppableProps}
           >
             {tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index} onRequestMeeting={onRequestMeeting} onOpenDetail={onOpenDetail} onDelete={onDelete} />
+              <TaskCard key={task.id} task={task} index={index} onRequestMeeting={onRequestMeeting} onOpenDetail={onOpenDetail} onDelete={onDelete} currentUser={currentUser} />
             ))}
             {provided.placeholder}
           </div>
         )}
       </Droppable>
 
-      <button 
-        onClick={() => setShowModal(true)}
-        className="text-gray-500 hover:text-gray-800 text-sm font-medium flex items-center justify-center mt-2 p-1 hover:bg-gray-100 rounded"
-      >
-        + Add
-      </button>
+      {canCreateTask(currentUser) && (
+        <button
+          onClick={() => setShowModal(true)}
+          className="text-gray-500 hover:text-gray-800 text-sm font-medium flex items-center justify-center mt-2 p-1 hover:bg-gray-100 rounded"
+        >
+          + Add
+        </button>
+      )}
 
       {showModal && (
         <AddTaskModal 
