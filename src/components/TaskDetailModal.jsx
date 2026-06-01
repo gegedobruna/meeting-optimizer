@@ -73,7 +73,16 @@ export default function TaskDetailModal({ task, onClose, onSave, onDelete, curre
               {COLUMNS.map(col => <option key={col} value={col}>{col}</option>)}
             </select>
           </div>
-          <div></div>
+          <div>
+            <label className="text-xs text-gray-500 font-medium block mb-1">Due Date</label>
+            <input
+              type="date"
+              className={fieldClass()}
+              value={edited.dueDate ?? ""}
+              onChange={(e) => setEdited({ ...edited, dueDate: e.target.value || null })}
+              readOnly={!canEdit}
+            />
+          </div>
         </div>
 
         {/* Description */}

@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Phase 3 complete — meetingRules.js evaluator, MeetingRequests page (requester form with live verdict + approver table), MeetingNotes page (text parser → Board tasks with From Meeting badge), App.jsx wired with meetingRequests state and shared addTask.
+last_change: Phase 4 complete — Dashboard (role-adaptive panels), MyTasks (filtered list + modal), Calendar (monthly grid with task/meeting dots), Teams (workload heatmap), Analytics (throughput bars, meeting ROI, blocker breakdown); dueDate added to task schema and TaskDetailModal; scheduledDate added to meeting approval flow.
 ---
 
 ## System Purpose

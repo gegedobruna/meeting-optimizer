@@ -58,9 +58,11 @@ export default function MeetingRequests({ currentUser, meetingRequests, setMeeti
   };
 
   // ── Approver actions ─────────────────────────────────────────────
+  const [scheduledDates, setScheduledDates] = useState({});
+
   const updateStatus = (id, status) => {
     setMeetingRequests(prev =>
-      prev.map(r => r.id === id ? { ...r, status } : r)
+      prev.map(r => r.id === id ? { ...r, status, scheduledDate: scheduledDates[id] ?? null } : r)
     );
   };
 
@@ -192,7 +194,14 @@ export default function MeetingRequests({ currentUser, meetingRequests, setMeeti
                   </div>
 
                   {r.status === MEETING_REQUEST_STATUSES.PENDING && (
-                    <div className="flex gap-2 mt-1">
+                    <div className="flex gap-2 mt-1 items-center flex-wrap">
+                      <input
+                        type="date"
+                        className="border border-gray-200 rounded px-2 py-1 text-xs"
+                        value={scheduledDates[r.id] ?? ""}
+                        onChange={e => setScheduledDates(prev => ({ ...prev, [r.id]: e.target.value || null }))}
+                        placeholder="Scheduled date"
+                      />
                       <button
                         onClick={() => updateStatus(r.id, MEETING_REQUEST_STATUSES.APPROVED)}
                         className="text-xs bg-green-600 hover:bg-green-700 text-white rounded px-3 py-1 font-medium"
