@@ -58,6 +58,21 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
 
   return (
     <div className="relative">
+      {/* Page header */}
+      <div className="flex items-start justify-between px-6 pt-6 pb-2">
+        <div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Team Board</p>
+          <h1 className="text-2xl font-bold text-gray-900">Kanban workflow</h1>
+          <p className="text-sm text-gray-500 mt-1">Review task status, blockers, and meeting-generated work.</p>
+        </div>
+        <button
+          onClick={() => setShowAgenda(!showAgenda)}
+          className="border border-gray-200 text-gray-600 hover:bg-gray-100 rounded-lg px-4 py-2 text-sm font-medium shrink-0 mt-1"
+        >
+          {showAgenda ? "Hide Agenda" : "Show Agenda"}
+        </button>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex flex-row gap-4 overflow-x-auto p-6">
           {COLUMNS.map(columnName => (

@@ -91,17 +91,6 @@ function App() {
         onLogout={handleLogout}
       />
       <div className="ml-56 flex-1 flex flex-col min-h-screen">
-        <header className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center relative z-20">
-          <h1 className="text-xl font-bold capitalize">{activePage.replace(/-/g, ' ')}</h1>
-          {activePage === "board" && (
-            <button
-              onClick={() => setShowAgenda(!showAgenda)}
-              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm font-medium"
-            >
-              {showAgenda ? "Hide Agenda" : "Show Agenda"}
-            </button>
-          )}
-        </header>
         <main className="flex-1">
           {renderPage()}
         </main>
