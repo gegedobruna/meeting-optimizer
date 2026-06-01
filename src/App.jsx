@@ -90,7 +90,7 @@ function App() {
         onNavigate={setActivePage}
         onLogout={handleLogout}
       />
-      <div className="ml-56 flex-1 flex flex-col min-h-screen">
+      <div className="ml-56 flex-1 flex flex-col min-h-screen overflow-x-hidden">
         <main className="flex-1">
           {renderPage()}
         </main>

@@ -41,7 +41,7 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] min-w-[300px] max-w-[350px] w-[300px] p-3 flex flex-col gap-2 shrink-0">
+    <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] min-w-[260px] max-w-[300px] w-[260px] p-3 flex flex-col gap-2 shrink-0">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <span className="font-bold text-sm text-gp-midnight">{columnName}</span>

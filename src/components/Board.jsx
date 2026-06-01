@@ -74,82 +74,71 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
     setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
 
   return (
-    <div className="relative">
-      {/* Page header */}
-      <div className="px-6 pt-6 pb-2">
-        <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest mb-1">Team Board</p>
-        <h1 className="text-2xl font-bold text-gp-midnight">Kanban workflow</h1>
+    <div>
+      {/* ── Header — lives outside the scroll box, never moves ── */}
+      <div className="bg-gp-sunrise px-5 pt-4 pb-3 border-b border-[rgba(22,25,22,0.08)]">
+        <p className="text-[10px] font-semibold text-gp-fl3 uppercase tracking-widest mb-0.5">Team Board</p>
+        <h1 className="text-xl font-bold text-gp-midnight leading-tight">Kanban workflow</h1>
 
-        {/* Showing line — controls live inline here */}
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-sm text-gp-fl2">Showing:</span>
+        <div className="flex items-center gap-2 mt-2">
+          {/* Compact toggle — leftmost */}
+          <button
+            onClick={() => setIsCompact(c => !c)}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border transition-colors shrink-0 ${
+              isCompact
+                ? 'bg-gp-midnight text-white border-gp-midnight'
+                : 'bg-white text-gp-fl2 border-[rgba(22,25,22,0.12)] hover:text-gp-midnight hover:border-gp-fl3'
+            }`}
+          >
+            <svg width="12" height="12" viewBox="0 0 13 13" fill="none" className="shrink-0">
+              <rect x="0" y="1" width="13" height="2" rx="1" fill="currentColor"/>
+              <rect x="0" y="5.5" width="13" height="2" rx="1" fill="currentColor"/>
+              <rect x="0" y="10" width="13" height="2" rx="1" fill="currentColor"/>
+            </svg>
+            Compact
+          </button>
 
-          {/* Admin: team filter dropdown */}
+          <span className="w-px h-3.5 bg-[rgba(22,25,22,0.12)] shrink-0" />
+          <span className="text-xs text-gp-fl2 shrink-0">Showing:</span>
+
           {isAdmin && (
             <select
               value={adminTeamFilter}
               onChange={e => setAdminTeamFilter(e.target.value)}
-              className="text-sm font-medium text-gp-midnight border border-[rgba(22,25,22,0.12)] rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-gp-coral/20 focus:border-gp-coral cursor-pointer"
+              className="text-xs font-medium text-gp-midnight border border-[rgba(22,25,22,0.12)] rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-gp-coral/20 focus:border-gp-coral cursor-pointer"
             >
               <option value="all">All Teams</option>
-              {TEAMS.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
-              ))}
+              {TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
           )}
 
-          {/* Team Lead: pill toggle */}
           {isLead && (
             <div className="flex items-center bg-gp-cream rounded-lg p-0.5 gap-0.5">
               <button
                 onClick={() => setShowAllTeams(false)}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                className={`px-2.5 py-0.5 rounded-md text-xs font-semibold transition-colors ${
                   !showAllTeams ? 'bg-white text-gp-midnight shadow-sm' : 'text-gp-fl2 hover:text-gp-midnight'
                 }`}
-              >
-                {myTeam?.name ?? 'My Team'}
-              </button>
+              >{myTeam?.name ?? 'My Team'}</button>
               <button
                 onClick={() => setShowAllTeams(true)}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                className={`px-2.5 py-0.5 rounded-md text-xs font-semibold transition-colors ${
                   showAllTeams ? 'bg-white text-gp-midnight shadow-sm' : 'text-gp-fl2 hover:text-gp-midnight'
                 }`}
-              >
-                All Teams
-              </button>
+              >All Teams</button>
             </div>
           )}
 
-            {/* Member: plain label, no control */}
           {!isAdmin && !isLead && (
-            <span className="text-sm font-medium text-gp-fl1">{myTeam?.name ?? 'All'}</span>
+            <span className="text-xs font-medium text-gp-fl1">{myTeam?.name ?? 'All'}</span>
           )}
-
-          {/* Compact mode toggle */}
-          <div className="ml-auto flex items-center">
-            <button
-              onClick={() => setIsCompact(c => !c)}
-              title={isCompact ? 'Switch to full cards' : 'Switch to compact cards'}
-              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
-                isCompact
-                  ? 'bg-gp-midnight text-white border-gp-midnight'
-                  : 'bg-white text-gp-fl2 border-[rgba(22,25,22,0.12)] hover:text-gp-midnight hover:border-gp-fl3'
-              }`}
-            >
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="shrink-0">
-                <rect x="0" y="1" width="13" height="2" rx="1" fill="currentColor"/>
-                <rect x="0" y="5.5" width="13" height="2" rx="1" fill="currentColor"/>
-                <rect x="0" y="10" width="13" height="2" rx="1" fill="currentColor"/>
-              </svg>
-              Compact
-            </button>
-          </div>
         </div>
       </div>
 
+      {/* ── Columns — only this box scrolls horizontally ── */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div
-          className={`flex flex-row gap-4 p-6 overflow-x-auto pb-8 ${showAgenda ? 'pr-80' : ''}`}
+          className={`flex flex-row gap-3 p-4 overflow-x-auto pb-6 ${showAgenda ? 'pr-80' : ''}`}
           style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(22,25,22,0.15) transparent' }}
         >
           {COLUMNS.map(columnName => (
