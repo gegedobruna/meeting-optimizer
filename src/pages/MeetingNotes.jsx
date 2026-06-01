@@ -141,6 +141,7 @@ export default function MeetingNotes({ currentUser, addTask }) {
                   onChange={e => updateItem(i, { priority: e.target.value })}
                   disabled={it.added}
                 >
+                  <option value="Urgent">Urgent</option>
                   <option value="High">High</option>
                   <option value="Medium">Medium</option>
                   <option value="Low">Low</option>

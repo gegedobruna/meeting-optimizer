@@ -90,6 +90,7 @@ export default function TaskDetailModal({ task, onClose, onSave, onDelete, curre
               onChange={(e) => setEdited({ ...edited, priority: e.target.value })}
               disabled={!canEdit}
             >
+              <option value="Urgent">Urgent</option>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
