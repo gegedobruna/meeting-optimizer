@@ -23,3 +23,34 @@ export const AGENDA_ITEMS = [
   {id:"a3", topic:"QA handoff process",    owner:"Gege",   minutes:10},
   {id:"a4", topic:"Demo prep",             owner:"Edda",   minutes:5},
 ];
+
+export const ROLES = {
+  ADMIN:       "ADMIN",
+  TEAM_LEAD:   "TEAM_LEAD",
+  TEAM_MEMBER: "TEAM_MEMBER",
+};
+
+export const USERS = [
+  { id:"u1", name:"Alex Morgan",   email:"alex@mo.io",  password:"admin123",  role:ROLES.ADMIN,       teamId:"team1", avatar:"AM" },
+  { id:"u2", name:"Gege Dobruna",  email:"gege@mo.io",  password:"lead123",   role:ROLES.TEAM_LEAD,   teamId:"team1", avatar:"GD" },
+  { id:"u3", name:"Sara Chen",     email:"sara@mo.io",  password:"lead456",   role:ROLES.TEAM_LEAD,   teamId:"team2", avatar:"SC" },
+  { id:"u4", name:"Edda Smith",    email:"edda@mo.io",  password:"member123", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"ES" },
+  { id:"u5", name:"Marco Rivera",  email:"marco@mo.io", password:"member456", role:ROLES.TEAM_MEMBER, teamId:"team1", avatar:"MR" },
+  { id:"u6", name:"Priya Patel",   email:"priya@mo.io", password:"member789", role:ROLES.TEAM_MEMBER, teamId:"team2", avatar:"PP" },
+];
+
+export const TEAMS = [
+  { id:"team1", name:"Alpha Team", leadId:"u2", memberIds:["u1","u2","u4","u5"] },
+  { id:"team2", name:"Beta Team",  leadId:"u3", memberIds:["u3","u6"] },
+];
+
+export const NAV_ITEMS = [
+  { label:"Dashboard",        page:"dashboard",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Board",            page:"board",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"My Tasks",         page:"my-tasks",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Meeting Requests", page:"meeting-requests",  roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Meeting Notes",    page:"meeting-notes",     roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Calendar",         page:"calendar",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Teams",            page:"teams",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
+  { label:"Analytics",        page:"analytics",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
+];

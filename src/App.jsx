@@ -1,33 +1,82 @@
 import { useState, useEffect } from 'react';
 import Board from './components/Board';
-import { INITIAL_TASKS } from './data/mockData';
+import Login from './components/Auth/Login';
+import Sidebar from './components/Layout/Sidebar';
+import { INITIAL_TASKS, USERS } from './data/mockData';
 import { loadFromStorage, saveToStorage } from './utils/storage';
 
 function App() {
   const [tasks, setTasks] = useState(() => loadFromStorage("kanban_tasks", INITIAL_TASKS));
   const [showAgenda, setShowAgenda] = useState(true);
+  const [activePage, setActivePage] = useState("board");
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedId = loadFromStorage("mo_current_user", null);
+    return savedId ? (USERS.find(u => u.id === savedId) ?? null) : null;
+  });
 
   useEffect(() => {
     saveToStorage("kanban_tasks", tasks);
   }, [tasks]);
 
+  const handleLogin = (user) => {
+    saveToStorage("mo_current_user", user.id);
+    setCurrentUser(user);
+    setActivePage("board");
+  };
+
+  const handleLogout = () => {
+    saveToStorage("mo_current_user", null);
+    setCurrentUser(null);
+  };
+
+  if (!currentUser) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  const renderPage = () => {
+    if (activePage === "board") {
+      return (
+        <Board
+          tasks={tasks}
+          setTasks={setTasks}
+          showAgenda={showAgenda}
+          setShowAgenda={setShowAgenda}
+          currentUser={currentUser}
+        />
+      );
+    }
+    return (
+      <div className="p-8 text-gray-500 text-sm">
+        Page <span className="font-medium text-gray-700">{activePage}</span> — coming soon.
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center relative z-20">
-        <h1 className="text-xl font-bold">Meeting Optimizer</h1>
-        <button
-          onClick={() => setShowAgenda(!showAgenda)}
-          className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm font-medium"
-        >
-          {showAgenda ? "Hide Agenda" : "Show Agenda"}
-        </button>
-      </header>
-      <Board 
-        tasks={tasks} 
-        setTasks={setTasks} 
-        showAgenda={showAgenda} 
-        setShowAgenda={setShowAgenda} 
+    <div className="min-h-screen bg-gray-100 flex">
+      <Sidebar
+        currentUser={currentUser}
+        activePage={activePage}
+        onNavigate={setActivePage}
+        onLogout={handleLogout}
       />
+      <div className="ml-56 flex-1 flex flex-col min-h-screen">
+        <header className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center relative z-20">
+          <h1 className="text-xl font-bold capitalize">{activePage.replace(/-/g, ' ')}</h1>
+          {activePage === "board" && (
+            <button
+              onClick={() => setShowAgenda(!showAgenda)}
+              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm font-medium"
+            >
+              {showAgenda ? "Hide Agenda" : "Show Agenda"}
+            </button>
+          )}
+        </header>
+        <main className="flex-1">
+          {renderPage()}
+        </main>
+      </div>
     </div>
   );
 }
