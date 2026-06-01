@@ -15,6 +15,9 @@ export const canDragTask = (user, task) =>
 export const canApproveMeeting = (user) =>
   user.role === ROLES.ADMIN || user.role === ROLES.TEAM_LEAD;
 
+export const canScheduleMeeting = (user) =>
+  user.role === ROLES.ADMIN || user.role === ROLES.TEAM_LEAD;
+
 export const canViewAnalytics = (user) =>
   user.role === ROLES.ADMIN || user.role === ROLES.TEAM_LEAD;
 

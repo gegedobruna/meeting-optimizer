@@ -35,8 +35,9 @@ const getTeamName = (assignedUserIds) => {
 };
 
 export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
-  const [showInput, setShowInput] = useState(false);
-  const [reasonValue, setReasonValue] = useState('');
+  const [showInput,    setShowInput]    = useState(false);
+  const [reasonValue,  setReasonValue]  = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const assignees    = getUsersByIds(task.assignedUserIds ?? []);
   const teamName     = getTeamName(task.assignedUserIds);
@@ -60,24 +61,49 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onOpenDetail(task)}
-          className={`relative group bg-white rounded-xl shadow-sm border border-slate-100 p-4 cursor-grab hover:shadow-md transition-shadow duration-150 flex flex-col gap-3 ${accent} ${ring}`}
+          className={`group bg-white rounded-xl shadow-sm border border-slate-100 p-4 cursor-grab hover:shadow-md transition-shadow duration-150 flex flex-col gap-3 ${accent} ${ring}`}
         >
-          {/* Delete — top-left on hover */}
-          {canDeleteTask(currentUser, task) && (
-            <button
-              className="absolute top-2 left-6 hidden group-hover:flex items-center justify-center w-5 h-5 bg-red-100 hover:bg-red-500 text-red-400 hover:text-white rounded transition-colors text-xs leading-none z-10"
-              onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+          {/* Title row — priority pill + delete live here, no absolute positioning */}
+          <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+            <p
+              className="font-semibold text-sm text-slate-900 line-clamp-1 flex-1 cursor-grab"
+              onClick={e => { e.stopPropagation(); onOpenDetail(task); }}
             >
-              ×
-            </button>
-          )}
+              {task.title}
+            </p>
 
-          {/* Title + priority pill */}
-          <div className="flex items-start justify-between gap-2">
-            <p className="font-semibold text-sm text-slate-900 line-clamp-1 flex-1">{task.title}</p>
+            {/* Priority pill — always visible */}
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${pill}`}>
               {task.priority}
             </span>
+
+            {/* Delete control — sits inline, only appears on group-hover */}
+            {canDeleteTask(currentUser, task) && (
+              confirmDelete ? (
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-xs text-red-500 font-medium">Sure?</span>
+                  <button
+                    onClick={() => onDelete(task.id)}
+                    className="text-xs bg-red-500 hover:bg-red-600 text-white rounded px-1.5 py-0.5 font-semibold transition-colors"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-500 rounded px-1.5 py-0.5 font-semibold transition-colors"
+                  >
+                    No
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="hidden group-hover:flex items-center justify-center w-5 h-5 rounded-full text-slate-300 hover:bg-red-50 hover:text-red-500 transition-colors text-base leading-none shrink-0"
+                >
+                  ×
+                </button>
+              )
+            )}
           </div>
 
           {/* Description */}

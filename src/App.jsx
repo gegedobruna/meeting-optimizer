@@ -68,7 +68,7 @@ function App() {
       case "meeting-notes":
         return <MeetingNotes currentUser={currentUser} addTask={addTask} />;
       case "calendar":
-        return <Calendar tasks={tasks} meetingRequests={meetingRequests} />;
+        return <Calendar currentUser={currentUser} tasks={tasks} meetingRequests={meetingRequests} />;
       case "teams":
         return <Teams currentUser={currentUser} tasks={tasks} onNavigate={setActivePage} />;
       case "analytics":

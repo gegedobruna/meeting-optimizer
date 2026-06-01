@@ -1,66 +1,51 @@
-import { useState } from 'react';
-import { USERS } from '../../data/mockData';
+import { USERS, ROLES } from '../../data/mockData';
+
+const ROLE_BADGE = {
+  ADMIN:       { label: 'Admin',       className: 'border border-red-400 text-red-500' },
+  TEAM_LEAD:   { label: 'Team Lead',   className: 'border border-blue-400 text-blue-600' },
+  TEAM_MEMBER: { label: 'Team Member', className: 'border border-slate-300 text-slate-500' },
+};
+
+const AVATAR_COLOR = {
+  ADMIN:       'bg-red-100 text-red-700',
+  TEAM_LEAD:   'bg-blue-100 text-blue-700',
+  TEAM_MEMBER: 'bg-slate-100 text-slate-700',
+};
 
 export default function Login({ onLogin }) {
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const user = USERS.find(u => u.email === email && u.password === password);
-    if (user) {
-      onLogin(user);
-    } else {
-      setError('Invalid credentials');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-gray-900 text-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-1">Meeting Optimizer</h1>
-        <p className="text-gray-400 text-sm mb-6">Sign in to your account</p>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900">Meeting Optimizer</h1>
+        <p className="text-sm text-gray-400 mt-1">Workplace productivity hub</p>
+        <p className="text-sm text-gray-500 mt-4">Select your profile to continue</p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => { setEmail(e.target.value); setError(''); }}
-              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-              placeholder="you@mo.io"
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => { setPassword(e.target.value); setError(''); }}
-              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-400 text-sm">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 text-sm font-medium transition-colors"
-          >
-            Sign In
-          </button>
-        </form>
-
-        <p className="text-gray-500 text-xs mt-6">
-          Demo: gege@mo.io / lead123 &nbsp;|&nbsp; alex@mo.io / admin123
-        </p>
+      {/* User card grid */}
+      <div className="grid grid-cols-3 gap-4 w-full max-w-2xl">
+        {USERS.map(user => {
+          const badge  = ROLE_BADGE[user.role];
+          const avatar = AVATAR_COLOR[user.role];
+          return (
+            <button
+              key={user.id}
+              onClick={() => onLogin(user)}
+              className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col items-center gap-2 hover:shadow-md hover:ring-2 hover:ring-blue-400 transition-all text-center"
+            >
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-base font-bold ${avatar}`}>
+                {user.avatar}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{user.title}</p>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${badge.className}`}>
+                {badge.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
