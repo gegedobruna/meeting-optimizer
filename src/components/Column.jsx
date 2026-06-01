@@ -10,21 +10,21 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
 
   return (
     <div className="bg-white rounded-xl shadow-sm min-w-[220px] max-w-[220px] p-3 flex flex-col gap-2">
-      <div className="flex items-center gap-2 font-bold mb-2">
-        {columnName}
-        <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-sm text-gray-800">{columnName}</span>
+          <span className="text-xs text-gray-400 font-normal">{tasks.length} task{tasks.length !== 1 ? 's' : ''}</span>
+        </div>
+        <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-semibold">
           {tasks.length}
         </span>
       </div>
-      
+
       {columnName === "In Progress" && (
-        <div className={`text-xs font-medium px-2 py-1 rounded mb-2 ${
-          tasks.length <= WIP_LIMIT ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        <div className={`text-xs font-semibold px-3 py-1.5 rounded-lg mb-1 ${
+          tasks.length <= WIP_LIMIT ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
         }`}>
-          {tasks.length <= WIP_LIMIT 
-            ? `WIP: ${tasks.length}/${WIP_LIMIT}`
-            : `⚠ WIP: ${tasks.length}/${WIP_LIMIT}`
-          }
+          {tasks.length <= WIP_LIMIT ? 'Healthy WIP' : '⚠ WIP Limit Exceeded'}
         </div>
       )}
 
