@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Phase 1 complete — added auth (Login.jsx), shell layout (Sidebar.jsx), role/user/team mock data, and permissions helper layer; App.jsx now manages currentUser + activePage state with localStorage session persistence.
+last_change: Phase 2 complete — permission-gated drag-and-drop (toast on unauthorized move), conditional Create/Delete UI by role, read-only TaskDetailModal for non-owners, and blockedSince escalation indicators (yellow/orange/red+pulse) on Blocked cards.
 ---
 
 ## System Purpose
