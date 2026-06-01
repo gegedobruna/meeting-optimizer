@@ -1,3 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Funnel Sans', sans-serif;
+    background-color: #FFFAF4;
+    color: #161916;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Funnel Sans', sans-serif;
+    line-height: 1.25;
+    color: #161916;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    line-height: 1.65;
+  }
+
+  /* Remove default right-align anywhere it may creep in */
+  [style*="text-align: right"],
+  [style*="text-align:right"] {
+    text-align: left !important;
+  }
+
+  input, textarea, select, button {
+    font-family: 'Funnel Sans', sans-serif;
+  }
+}
+
+@layer components {
+
+  /* ── Genpact Wayfinder ──────────────────────────────────────────────────── */
+  /* Inward-facing corner marks — apply to hero sections / page headers      */
+  .gp-wayfinder {
+    position: relative;
+  }
+  .gp-wayfinder::before,
+  .gp-wayfinder::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .gp-wayfinder::before {
+    top: 0;
+    left: 0;
+    border-top: 2px solid #FF555F;
+    border-left: 2px solid #FF555F;
+  }
+  .gp-wayfinder::after {
+    bottom: 0;
+    right: 0;
+    border-bottom: 2px solid #FF555F;
+    border-right: 2px solid #FF555F;
+  }
+
+  /* Four-corner wayfinder variant via sibling spans (use with .gp-wf-tl .gp-wf-br etc.) */
+  .gp-wayfinder-full {
+    position: relative;
+  }
+
+  /* ── Brand input baseline ─────────────────────────────────────────────── */
+  .gp-input {
+    width: 100%;
+    border: 1px solid rgba(22, 25, 22, 0.15);
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    color: #161916;
+    background-color: #FFFFFF;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    font-family: 'Funnel Sans', sans-serif;
+  }
+  .gp-input::placeholder {
+    color: #ADB1AC;
+  }
+  .gp-input:focus {
+    outline: none;
+    border-color: #FF555F;
+    box-shadow: 0 0 0 3px rgba(255, 85, 95, 0.12);
+  }
+
+  /* ── Card baseline ────────────────────────────────────────────────────── */
+  .gp-card {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(22, 25, 22, 0.12);
+    border-radius: 0.75rem;
+  }
+
+  /* ── Primary button ───────────────────────────────────────────────────── */
+  .gp-btn-primary {
+    background-color: #161916;
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    transition: background-color 0.15s;
+    font-family: 'Funnel Sans', sans-serif;
+  }
+  .gp-btn-primary:hover {
+    background-color: #444744;
+  }
+  .gp-btn-primary:disabled {
+    opacity: 0.4;
+  }
+
+  /* ── Coral accent button ──────────────────────────────────────────────── */
+  .gp-btn-coral {
+    background-color: #FF555F;
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    transition: background-color 0.15s;
+    font-family: 'Funnel Sans', sans-serif;
+  }
+  .gp-btn-coral:hover {
+    background-color: #E04050;
+  }
+}

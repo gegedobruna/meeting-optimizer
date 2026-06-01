@@ -67,9 +67,9 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
     .sort((a, b) => new Date(b.scheduledDate ?? 0) - new Date(a.scheduledDate ?? 0));
 
   const PanelEntry = ({ title, sub, pill }) => (
-    <div className="py-2 border-b border-slate-50 last:border-0">
-      <p className="text-sm font-medium text-slate-800">{title}</p>
-      {sub  && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+    <div className="py-2 border-b border-[rgba(22,25,22,0.06)] last:border-0">
+      <p className="text-sm font-medium text-gp-midnight">{title}</p>
+      {sub  && <p className="text-xs text-gp-fl3 mt-0.5">{sub}</p>}
       {pill && <p className={`text-xs mt-0.5 uppercase tracking-wide ${STATUS_PILL[pill] ?? 'text-slate-400'}`}>{pill}</p>}
     </div>
   );
@@ -83,9 +83,9 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
           { label: 'This week',            value: weekMins  > 0 ? `${weekMins} min`  : '0 min' },
           { label: 'Approved meetings',    value: approved.length },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p className="text-xs text-slate-400 font-medium mb-1">{label}</p>
-            <p className="text-2xl font-bold text-slate-900">{value}</p>
+          <div key={label} className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-5">
+            <p className="text-xs text-gp-fl3 font-medium mb-1">{label}</p>
+            <p className="text-2xl font-bold text-gp-midnight">{value}</p>
           </div>
         ))}
       </div>
@@ -97,10 +97,10 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
           { label: 'This Week', items: weekTasks,     empty: 'No entries.' },
           { label: 'Upcoming',  items: upcomingTasks, empty: 'No entries.' },
         ].map(({ label, items, empty }) => (
-          <div key={label} className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p className="text-sm font-semibold text-slate-700 mb-3">{label}</p>
+          <div key={label} className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-5">
+            <p className="text-sm font-semibold text-gp-fl1 mb-3">{label}</p>
             {items.length === 0 ? (
-              <p className="text-xs text-slate-400">{empty}</p>
+              <p className="text-xs text-gp-fl2">{empty}</p>
             ) : (
               items.map(t => (
                 <PanelEntry key={t.id} title={t.title} sub={formatDue(t.dueDate)} />
@@ -113,10 +113,10 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
       {/* Task deadlines + Meeting history */}
       <div className="grid grid-cols-2 gap-4">
         {/* Task deadlines */}
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-          <p className="text-sm font-semibold text-slate-700 mb-3">Task deadlines</p>
+        <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-5">
+          <p className="text-sm font-semibold text-gp-fl1 mb-3">Task deadlines</p>
           {deadlines.length === 0 ? (
-            <p className="text-xs text-slate-400">No upcoming deadlines.</p>
+            <p className="text-xs text-gp-fl2">No upcoming deadlines.</p>
           ) : (
             deadlines.map(t => (
               <PanelEntry key={t.id} title={t.title} sub={formatDue(t.dueDate)} />
@@ -125,10 +125,10 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
         </div>
 
         {/* Meeting history */}
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 overflow-y-auto max-h-80">
-          <p className="text-sm font-semibold text-slate-700 mb-3">Meeting history</p>
+        <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-5 overflow-y-auto max-h-80">
+          <p className="text-sm font-semibold text-gp-fl1 mb-3">Meeting history</p>
           {history.length === 0 ? (
-            <p className="text-xs text-slate-400">No meeting requests yet.</p>
+            <p className="text-xs text-gp-fl2">No meeting requests yet.</p>
           ) : (
             history.map(r => (
               <PanelEntry
@@ -176,9 +176,9 @@ function GridView({ currentUser, tasks, meetingRequests }) {
     <div className="flex flex-col gap-4">
       {/* Nav */}
       <div className="flex items-center gap-3">
-        <button onClick={prevMonth} className="text-slate-400 hover:text-slate-700 px-2 py-1 rounded hover:bg-slate-100 text-lg transition-colors">‹</button>
-        <h3 className="text-base font-semibold text-slate-800 w-44">{MONTH_NAMES[month]} {year}</h3>
-        <button onClick={nextMonth} className="text-slate-400 hover:text-slate-700 px-2 py-1 rounded hover:bg-slate-100 text-lg transition-colors">›</button>
+        <button onClick={prevMonth} className="text-gp-fl3 hover:text-gp-midnight px-2 py-1 rounded hover:bg-gp-cream text-lg transition-colors">‹</button>
+        <h3 className="text-base font-semibold text-gp-midnight w-44">{MONTH_NAMES[month]} {year}</h3>
+        <button onClick={nextMonth} className="text-gp-fl3 hover:text-gp-midnight px-2 py-1 rounded hover:bg-gp-cream text-lg transition-colors">›</button>
       </div>
 
       <div className="flex gap-4 items-start">
@@ -186,7 +186,7 @@ function GridView({ currentUser, tasks, meetingRequests }) {
         <div className="flex-1">
           <div className="grid grid-cols-7 mb-1">
             {DAY_NAMES.map(d => (
-              <div key={d} className="text-center text-xs text-slate-400 font-medium py-1">{d}</div>
+              <div key={d} className="text-center text-xs text-gp-fl3 font-medium py-1">{d}</div>
             ))}
           </div>
           <div className="grid grid-cols-7 gap-1">
@@ -203,10 +203,10 @@ function GridView({ currentUser, tasks, meetingRequests }) {
                   className={`min-h-[52px] rounded-lg p-1.5 cursor-pointer border transition-colors ${
                     isSelected ? 'border-blue-400 bg-blue-50' :
                     isToday    ? 'border-blue-200 bg-blue-50/60' :
-                                 'border-slate-100 bg-white hover:border-slate-300'
+                                 'border-[rgba(22,25,22,0.10)] bg-white hover:border-gp-fl3'
                   }`}
                 >
-                  <p className={`text-xs font-medium ${isToday ? 'text-blue-600' : 'text-slate-700'}`}>{day}</p>
+                  <p className={`text-xs font-medium ${isToday ? 'text-blue-600' : 'text-gp-fl1'}`}>{day}</p>
                   <div className="flex gap-0.5 mt-1 flex-wrap">
                     {hasTasks && <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />}
                     {hasMeet  && <span className="w-1.5 h-1.5 rounded-full bg-green-400" />}
@@ -219,24 +219,24 @@ function GridView({ currentUser, tasks, meetingRequests }) {
 
         {/* Side panel */}
         {selected && (
-          <div className="w-64 bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex flex-col gap-3">
-            <p className="text-sm font-semibold text-slate-700">{MONTH_NAMES[month]} {selected}</p>
+          <div className="w-64 bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-4 flex flex-col gap-3">
+            <p className="text-sm font-semibold text-gp-fl1">{MONTH_NAMES[month]} {selected}</p>
             {selTasks.length === 0 && selMeetings.length === 0 && (
-              <p className="text-xs text-slate-400">Nothing scheduled.</p>
+              <p className="text-xs text-gp-fl2">Nothing scheduled.</p>
             )}
             {selTasks.length > 0 && (
               <div>
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Tasks due</p>
+                <p className="text-xs text-gp-fl2 font-semibold uppercase tracking-wide mb-1">Tasks due</p>
                 {selTasks.map(t => (
-                  <div key={t.id} className="text-xs text-slate-700 py-1.5 border-b border-slate-50 last:border-0 truncate">{t.title}</div>
+                  <div key={t.id} className="text-xs text-gp-midnight py-1.5 border-b border-[rgba(22,25,22,0.06)] last:border-0 truncate">{t.title}</div>
                 ))}
               </div>
             )}
             {selMeetings.length > 0 && (
               <div>
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Meetings</p>
+                <p className="text-xs text-gp-fl2 font-semibold uppercase tracking-wide mb-1">Meetings</p>
                 {selMeetings.map(r => (
-                  <div key={r.id} className="text-xs text-slate-700 py-1.5 border-b border-slate-50 last:border-0 truncate">{r.title}</div>
+                  <div key={r.id} className="text-xs text-gp-midnight py-1.5 border-b border-[rgba(22,25,22,0.06)] last:border-0 truncate">{r.title}</div>
                 ))}
               </div>
             )}
@@ -245,7 +245,7 @@ function GridView({ currentUser, tasks, meetingRequests }) {
       </div>
 
       {/* Legend */}
-      <div className="flex gap-5 text-xs text-slate-400">
+      <div className="flex gap-5 text-xs text-gp-fl3">
         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-400 inline-block" /> Tasks due</span>
         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400 inline-block" /> Approved meetings</span>
       </div>
@@ -282,24 +282,24 @@ export default function Calendar({ currentUser, tasks, meetingRequests }) {
     <div className="p-6 max-w-5xl mx-auto flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Calendar</p>
-          <h1 className="text-3xl font-bold text-slate-900">
+        <div className="gp-wayfinder">
+          <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest mb-1">Calendar</p>
+          <h1 className="text-3xl font-bold text-gp-midnight">
             {view === 'schedule' ? scheduleTitle : 'Calendar view'}
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-gp-fl2 mt-1">
             {view === 'schedule' ? scheduleSubtitle : 'Browse tasks and meetings by date.'}
           </p>
         </div>
 
         {/* Toggle */}
-        <div className="flex items-center bg-slate-100 rounded-lg p-1 gap-1 shrink-0 mt-1">
+        <div className="flex items-center bg-gp-cream rounded-lg p-1 gap-1 shrink-0 mt-1">
           <button
             onClick={() => setView('schedule')}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
               view === 'schedule'
-                ? 'bg-white text-slate-800 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-white text-gp-midnight shadow-sm'
+                : 'text-gp-fl2 hover:text-gp-midnight'
             }`}
           >
             Schedule
@@ -308,8 +308,8 @@ export default function Calendar({ currentUser, tasks, meetingRequests }) {
             onClick={() => setView('calendar')}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
               view === 'calendar'
-                ? 'bg-white text-slate-800 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-white text-gp-midnight shadow-sm'
+                : 'text-gp-fl2 hover:text-gp-midnight'
             }`}
           >
             Calendar

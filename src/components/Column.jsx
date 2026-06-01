@@ -42,13 +42,13 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm min-w-[220px] max-w-[220px] p-3 flex flex-col gap-2">
+    <div className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] min-w-[220px] max-w-[220px] p-3 flex flex-col gap-2">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-sm text-gray-800">{columnName}</span>
-          <span className="text-xs text-gray-400 font-normal">{tasks.length} task{tasks.length !== 1 ? 's' : ''}</span>
+          <span className="font-bold text-sm text-gp-midnight">{columnName}</span>
+          <span className="text-xs text-gp-fl3 font-normal">{tasks.length} task{tasks.length !== 1 ? 's' : ''}</span>
         </div>
-        <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-semibold">
+        <span className="bg-gp-cream text-gp-fl1 text-xs px-2 py-0.5 rounded-full font-semibold">
           {tasks.length}
         </span>
       </div>
@@ -86,7 +86,7 @@ export default function Column({ columnName, tasks, allTasks, addTask, onRequest
       {canCreateTask(currentUser) && (
         <button
           onClick={() => setShowModal(true)}
-          className="text-gray-500 hover:text-gray-800 text-sm font-medium flex items-center justify-center mt-2 p-1 hover:bg-gray-100 rounded"
+          className="text-gp-fl2 hover:text-gp-midnight text-sm font-medium flex items-center justify-center mt-2 p-1 hover:bg-gp-sunrise rounded"
         >
           + Add
         </button>

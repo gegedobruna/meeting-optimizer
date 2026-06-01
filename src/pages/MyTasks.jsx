@@ -45,7 +45,7 @@ const getTeamName = (assignedUserIds) => {
   return TEAMS.find(t => t.memberIds.includes(assignedUserIds[0]))?.name ?? null;
 };
 
-const selectCls = 'border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer';
+const selectCls = 'border border-[rgba(22,25,22,0.15)] rounded-lg px-3 py-1.5 text-sm text-gp-midnight bg-white focus:outline-none focus:ring-2 focus:ring-[#FF555F]/20 focus:border-gp-coral cursor-pointer transition';
 
 export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
   const [statusFilter,   setStatusFilter]   = useState('All');
@@ -68,23 +68,23 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
     <div className="p-6 max-w-5xl mx-auto flex flex-col gap-6">
 
       {/* Page header */}
-      <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Personal Tasks</p>
-        <h1 className="text-3xl font-bold text-slate-900">My tasks</h1>
-        <p className="text-sm text-slate-500 mt-1">Work on your assigned items and keep meeting follow-ups visible.</p>
+      <div className="gp-wayfinder">
+        <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest mb-1">Personal Tasks</p>
+        <h1 className="text-3xl font-bold text-gp-midnight">My tasks</h1>
+        <p className="text-sm text-gp-fl2 mt-1">Work on your assigned items and keep meeting follow-ups visible.</p>
       </div>
 
       {/* Filter bar */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-500 font-medium">Status</span>
+          <span className="text-sm text-gp-fl2 font-medium">Status</span>
           <select className={selectCls} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
             <option value="All">All</option>
             {COLUMNS.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-500 font-medium">Priority</span>
+          <span className="text-sm text-gp-fl2 font-medium">Priority</span>
           <select className={selectCls} value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
             <option value="All">All</option>
             <option value="Urgent">Urgent</option>
@@ -93,14 +93,14 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
             <option value="Low">Low</option>
           </select>
         </div>
-        <span className="ml-auto text-xs text-slate-400">
+        <span className="ml-auto text-xs text-gp-fl3">
           {filtered.length} task{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
 
       {/* Task list */}
       {filtered.length === 0 ? (
-        <p className="text-sm text-slate-400">No tasks match the selected filters.</p>
+        <p className="text-sm text-gp-fl2">No tasks match the selected filters.</p>
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map(task => {
@@ -112,13 +112,13 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
               <div
                 key={task.id}
                 onClick={() => setSelectedTask(task)}
-                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-4 cursor-pointer hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-5 flex flex-col gap-4 cursor-pointer hover:shadow-md transition-shadow"
               >
                 {/* Top row: title + badges */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-base text-slate-900">{task.title}</p>
+                      <p className="font-semibold text-base text-gp-midnight">{task.title}</p>
                       {esc && <span className={`text-xs font-semibold ${esc.cls}`}>{esc.text}</span>}
                       {task.fromMeeting && (
                         <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">
@@ -127,32 +127,32 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
                       )}
                     </div>
                     {task.description && (
-                      <p className="text-sm text-slate-400 mt-1 line-clamp-1">{task.description}</p>
+                      <p className="text-sm text-gp-fl2 mt-1 line-clamp-1">{task.description}</p>
                     )}
                   </div>
                   {/* Right-side plain-text badges */}
                   <div className="flex items-center gap-3 shrink-0 text-sm">
                     <span className={STATUS_COLOR[task.column] ?? 'text-slate-400'}>{task.column}</span>
                     <span className={PRIORITY_COLOR[task.priority] ?? 'text-slate-400'}>{task.priority}</span>
-                    {teamName && <span className="text-slate-400">{teamName}</span>}
+                    {teamName && <span className="text-gp-fl2">{teamName}</span>}
                   </div>
                 </div>
 
                 {/* Metadata row */}
-                <div className="grid grid-cols-3 gap-4 border-t border-slate-50 pt-4">
+                <div className="grid grid-cols-3 gap-4 border-t border-[rgba(22,25,22,0.06)] pt-4">
                   <div>
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Due Date</p>
-                    <p className="text-sm text-slate-700">{formatDue(task.dueDate)}</p>
+                    <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-wide mb-1">Due Date</p>
+                    <p className="text-sm text-gp-fl1">{formatDue(task.dueDate)}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Assigned Users</p>
-                    <p className="text-sm text-slate-700">
+                    <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-wide mb-1">Assigned Users</p>
+                    <p className="text-sm text-gp-fl1">
                       {assignees.length === 0 ? '—' : assignees.map(u => u.name).join(', ')}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Estimated</p>
-                    <p className="text-sm text-slate-700">{ESTIMATED[task.priority] ?? '—'}</p>
+                    <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-wide mb-1">Estimated</p>
+                    <p className="text-sm text-gp-fl1">{ESTIMATED[task.priority] ?? '—'}</p>
                   </div>
                 </div>
 
@@ -161,7 +161,7 @@ export default function MyTasks({ currentUser, tasks, saveTask, deleteTask }) {
                   className="flex items-center gap-2"
                   onClick={e => e.stopPropagation()}
                 >
-                  <span className="text-xs text-slate-400 font-medium">Update status</span>
+                  <span className="text-xs text-gp-fl3 font-medium">Update status</span>
                   <select
                     className={selectCls}
                     value={task.column}

@@ -76,19 +76,19 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
     <div className="relative">
       {/* Page header */}
       <div className="px-6 pt-6 pb-2">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Team Board</p>
-        <h1 className="text-2xl font-bold text-gray-900">Kanban workflow</h1>
+        <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest mb-1">Team Board</p>
+        <h1 className="text-2xl font-bold text-gp-midnight">Kanban workflow</h1>
 
         {/* Showing line — controls live inline here */}
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-sm text-gray-500">Showing:</span>
+          <span className="text-sm text-gp-fl2">Showing:</span>
 
           {/* Admin: team filter dropdown */}
           {isAdmin && (
             <select
               value={adminTeamFilter}
               onChange={e => setAdminTeamFilter(e.target.value)}
-              className="text-sm font-medium text-gray-700 border border-gray-200 rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer"
+              className="text-sm font-medium text-gp-midnight border border-[rgba(22,25,22,0.12)] rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-gp-coral/20 focus:border-gp-coral cursor-pointer"
             >
               <option value="all">All Teams</option>
               {TEAMS.map(t => (
@@ -99,11 +99,11 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
 
           {/* Team Lead: pill toggle */}
           {isLead && (
-            <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5">
+            <div className="flex items-center bg-gp-cream rounded-lg p-0.5 gap-0.5">
               <button
                 onClick={() => setShowAllTeams(false)}
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
-                  !showAllTeams ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  !showAllTeams ? 'bg-white text-gp-midnight shadow-sm' : 'text-gp-fl2 hover:text-gp-midnight'
                 }`}
               >
                 {myTeam?.name ?? 'My Team'}
@@ -111,7 +111,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
               <button
                 onClick={() => setShowAllTeams(true)}
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
-                  showAllTeams ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  showAllTeams ? 'bg-white text-gp-midnight shadow-sm' : 'text-gp-fl2 hover:text-gp-midnight'
                 }`}
               >
                 All Teams
@@ -121,7 +121,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
 
           {/* Member: plain label, no control */}
           {!isAdmin && !isLead && (
-            <span className="text-sm font-medium text-gray-700">{myTeam?.name ?? 'All'}</span>
+            <span className="text-sm font-medium text-gp-fl1">{myTeam?.name ?? 'All'}</span>
           )}
         </div>
       </div>

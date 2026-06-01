@@ -15,17 +15,17 @@ const STATUS_BADGE = {
   REJECTED: "bg-red-100 text-red-600",
 };
 
-const inputCls = 'w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition';
+const inputCls = 'w-full border border-[rgba(22,25,22,0.15)] rounded-lg px-3 py-2.5 text-sm text-gp-midnight placeholder-gp-fl3 focus:outline-none focus:ring-2 focus:ring-[#FF555F]/20 focus:border-gp-coral transition bg-white';
 
 // ─── Shared: Multi-team participant picker ────────────────────────────────────
 
 function ParticipantPicker({ selectedIds, onToggleMember, onToggleTeam }) {
   return (
-    <div className="flex flex-col gap-2 border border-slate-100 rounded-xl p-4 bg-slate-50">
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+    <div className="flex flex-col gap-2 border border-[rgba(22,25,22,0.10)] rounded-xl p-4 bg-gp-sunrise">
+      <p className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">
         Participants
         {selectedIds.length > 0 && (
-          <span className="ml-2 normal-case font-normal text-slate-400">
+          <span className="ml-2 normal-case font-normal text-gp-fl3">
             ({selectedIds.length} selected)
           </span>
         )}
@@ -39,7 +39,7 @@ function ParticipantPicker({ selectedIds, onToggleMember, onToggleTeam }) {
           <div key={team.id} className="flex flex-col gap-2">
             {/* Team header row */}
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold text-slate-600">{team.name}</p>
+              <p className="text-xs font-semibold text-gp-fl1">{team.name}</p>
               <button
                 type="button"
                 onClick={() => onToggleTeam(team)}
@@ -47,8 +47,8 @@ function ParticipantPicker({ selectedIds, onToggleMember, onToggleTeam }) {
                   allSelected
                     ? 'bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200'
                     : someSelected
-                    ? 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                    : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100'
+                    ? 'bg-white text-gp-fl2 border-[rgba(22,25,22,0.12)] hover:bg-gp-cream'
+                    : 'bg-white text-gp-fl2 border-[rgba(22,25,22,0.12)] hover:bg-gp-cream'
                 }`}
               >
                 {allSelected ? 'Deselect all' : 'Select all'}
@@ -66,8 +66,8 @@ function ParticipantPicker({ selectedIds, onToggleMember, onToggleTeam }) {
                     title={u.title}
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       active
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-slate-400 border-slate-200 opacity-50'
+                        ? 'bg-gp-midnight text-white border-gp-midnight'
+                        : 'bg-white text-gp-fl3 border-[rgba(22,25,22,0.12)] opacity-50'
                     }`}
                   >
                     <span>{u.avatar}</span>
@@ -80,7 +80,7 @@ function ParticipantPicker({ selectedIds, onToggleMember, onToggleTeam }) {
         );
       })}
 
-      <p className="text-xs text-slate-400 mt-1">Click a chip to toggle · use "Select all" per team</p>
+      <p className="text-xs text-gp-fl3 mt-1">Click a chip to toggle · use "Select all" per team</p>
     </div>
   );
 }
@@ -150,22 +150,22 @@ function RequestForm({ currentUser, meetingRequests, setMeetingRequests }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Form */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col gap-5">
+      <div className="bg-white rounded-2xl border border-[rgba(22,25,22,0.12)] p-6 flex flex-col gap-5">
         <div className="flex flex-col gap-1">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">New Request</p>
-          <h2 className="text-xl font-bold text-slate-900">Request a Meeting</h2>
-          <p className="text-sm text-slate-500">Your request will be reviewed by a team lead.</p>
+          <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest">New Request</p>
+          <h2 className="text-xl font-bold text-gp-midnight">Request a Meeting</h2>
+          <p className="text-sm text-gp-fl2">Your request will be reviewed by a team lead.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Meeting title</label>
+            <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Meeting title</label>
             <input className={inputCls} placeholder="e.g. Sprint blocker resolution"
               value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Duration (min)</label>
+            <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Duration (min)</label>
             <input type="number" min={5} max={480} className={inputCls}
               value={form.estimatedMinutes} onChange={e => setForm(p => ({ ...p, estimatedMinutes: +e.target.value }))} />
           </div>
@@ -183,7 +183,7 @@ function RequestForm({ currentUser, meetingRequests, setMeetingRequests }) {
               { field: 'hasUpdate',         label: 'This is primarily a status update' },
               { field: 'alternativeExists', label: 'An async alternative already exists' },
             ].map(({ field, label }) => (
-              <label key={field} className="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer select-none">
+              <label key={field} className="flex items-center gap-2.5 text-sm text-gp-fl1 cursor-pointer select-none">
                 <input type="checkbox" checked={form[field]} onChange={() => toggle(field)} className="rounded" />
                 {label}
               </label>
@@ -200,7 +200,7 @@ function RequestForm({ currentUser, meetingRequests, setMeetingRequests }) {
 
           <div className="flex items-center gap-3">
             <button type="submit"
-              className="bg-slate-900 hover:bg-slate-700 text-white text-sm rounded-lg px-5 py-2.5 font-semibold transition-colors disabled:opacity-40"
+              className="bg-gp-midnight hover:bg-gp-fl1 text-white text-sm rounded-lg px-5 py-2.5 font-semibold transition-colors disabled:opacity-40"
               disabled={!form.title.trim()}>
               Submit Request
             </button>
@@ -212,10 +212,10 @@ function RequestForm({ currentUser, meetingRequests, setMeetingRequests }) {
       {/* My requests */}
       {myRequests.length > 0 && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Your Requests</p>
+          <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest">Your Requests</p>
           {myRequests.map(r => (
-            <div key={r.id} className="bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-slate-800">{r.title}</span>
+            <div key={r.id} className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] px-4 py-3 flex items-center justify-between">
+              <span className="text-sm font-medium text-gp-midnight">{r.title}</span>
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_BADGE[r.status]}`}>{r.status}</span>
             </div>
           ))}
@@ -295,38 +295,38 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
     <div className="flex flex-col gap-6">
 
       {/* Schedule form */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col gap-5">
+      <div className="bg-white rounded-2xl border border-[rgba(22,25,22,0.12)] p-6 flex flex-col gap-5">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-0.5">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Direct Schedule</p>
-            <h2 className="text-xl font-bold text-slate-900">Schedule a Meeting</h2>
-            <p className="text-sm text-slate-500">As a team lead, your meetings are approved instantly.</p>
+            <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest">Direct Schedule</p>
+            <h2 className="text-xl font-bold text-gp-midnight">Schedule a Meeting</h2>
+            <p className="text-sm text-gp-fl2">As a team lead, your meetings are approved instantly.</p>
           </div>
           <span className="text-xs bg-green-100 text-green-700 font-semibold px-2.5 py-1 rounded-full">Auto-approved</span>
         </div>
 
         <form onSubmit={handleSchedule} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Meeting title</label>
+            <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Meeting title</label>
             <input className={inputCls} placeholder="e.g. Sprint planning · Q2 review"
               value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Date</label>
+              <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Date</label>
               <input type="date" className={inputCls}
                 value={form.scheduledDate} onChange={e => setForm(p => ({ ...p, scheduledDate: e.target.value }))} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Time</label>
+              <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Time</label>
               <input type="time" className={inputCls}
                 value={form.scheduledTime} onChange={e => setForm(p => ({ ...p, scheduledTime: e.target.value }))} />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Duration (min)</label>
+            <label className="text-xs font-semibold text-gp-fl2 uppercase tracking-wide">Duration (min)</label>
             <input type="number" min={5} max={480} className={inputCls}
               value={form.durationMins} onChange={e => setForm(p => ({ ...p, durationMins: +e.target.value }))} />
           </div>
@@ -339,7 +339,7 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
 
           <div className="flex items-center gap-3">
             <button type="submit"
-              className="bg-slate-900 hover:bg-slate-700 text-white text-sm rounded-lg px-5 py-2.5 font-semibold transition-colors disabled:opacity-40"
+              className="bg-gp-midnight hover:bg-gp-fl1 text-white text-sm rounded-lg px-5 py-2.5 font-semibold transition-colors disabled:opacity-40"
               disabled={!form.title.trim() || !form.scheduledDate}>
               Schedule Meeting
             </button>
@@ -351,7 +351,7 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
       {/* Pending requests to review */}
       {pending.length > 0 && (
         <div className="flex flex-col gap-3">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+          <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest">
             Pending Requests ({pending.length})
           </p>
           {pending.map(r => {
@@ -359,17 +359,17 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
               .map(id => USERS.find(u => u.id === id)?.name)
               .filter(Boolean);
             return (
-              <div key={r.id} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex flex-col gap-3">
+              <div key={r.id} className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] p-4 flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold text-slate-800 text-sm">{r.title}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="font-semibold text-gp-midnight text-sm">{r.title}</p>
+                    <p className="text-xs text-gp-fl3 mt-0.5">
                       by {r.requesterName}
                       {participantNames.length > 0 && ` · ${participantNames.length} participants`}
                       {r.params?.estimatedMinutes && ` · ${r.params.estimatedMinutes} min`}
                     </p>
                     {participantNames.length > 0 && (
-                      <p className="text-xs text-slate-400 mt-0.5">{participantNames.join(', ')}</p>
+                      <p className="text-xs text-gp-fl3 mt-0.5">{participantNames.join(', ')}</p>
                     )}
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${STATUS_BADGE[r.status]}`}>
@@ -384,7 +384,7 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
 
                 <div className="flex gap-2 items-center flex-wrap">
                   <input type="date"
-                    className="border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="border border-[rgba(22,25,22,0.15)] rounded-lg px-2 py-1.5 text-xs text-gp-midnight focus:outline-none focus:ring-2 focus:ring-[#FF555F]/20 focus:border-gp-coral bg-white"
                     value={dates[r.id] ?? ''}
                     onChange={e => setDates(prev => ({ ...prev, [r.id]: e.target.value || null }))}
                   />
@@ -406,13 +406,13 @@ function ScheduleForm({ currentUser, meetingRequests, setMeetingRequests }) {
       {/* Resolved meetings */}
       {others.length > 0 && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">All Meetings</p>
+          <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest">All Meetings</p>
           {others.map(r => (
-            <div key={r.id} className="bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 flex items-center justify-between gap-3">
+            <div key={r.id} className="bg-white rounded-xl border border-[rgba(22,25,22,0.12)] px-4 py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-slate-800 truncate">{r.title}</p>
+                <p className="text-sm font-medium text-gp-midnight truncate">{r.title}</p>
                 {r.scheduledDate && (
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-gp-fl3 mt-0.5">
                     {new Date(r.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     {' · '}
                     {new Date(r.scheduledDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
@@ -437,14 +437,14 @@ export default function MeetingRequests({ currentUser, meetingRequests, setMeeti
 
   return (
     <div className="p-6 max-w-3xl mx-auto flex flex-col gap-6">
-      <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">
+      <div className="gp-wayfinder">
+        <p className="text-xs font-semibold text-gp-fl3 uppercase tracking-widest mb-1">
           {isScheduler ? 'Team Lead' : 'Team Member'}
         </p>
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold text-gp-midnight">
           {isScheduler ? 'Meeting Scheduler' : 'Meeting Requests'}
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-gp-fl2 mt-1">
           {isScheduler
             ? 'Schedule meetings directly or review requests from your team.'
             : 'Submit a meeting request and track its approval status.'}

@@ -83,7 +83,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gp-sunrise flex">
       <Sidebar
         currentUser={currentUser}
         activePage={activePage}

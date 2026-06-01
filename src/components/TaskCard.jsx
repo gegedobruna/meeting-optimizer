@@ -62,12 +62,12 @@ export default function TaskCard({ task, index, overloadedUserIds, onRequestMeet
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onOpenDetail(task)}
-          className={`group bg-white rounded-xl shadow-sm border border-slate-100 p-4 cursor-grab hover:shadow-md transition-shadow duration-150 flex flex-col gap-3 ${accent} ${ring}`}
+          className={`group bg-white rounded-xl shadow-sm border border-[rgba(22,25,22,0.10)] p-4 cursor-grab hover:shadow-md transition-shadow duration-150 flex flex-col gap-3 ${accent} ${ring}`}
         >
           {/* Title row — priority pill + delete live here, no absolute positioning */}
           <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
             <p
-              className="font-semibold text-sm text-slate-900 line-clamp-1 flex-1 cursor-grab"
+              className="font-semibold text-sm text-gp-midnight line-clamp-1 flex-1 cursor-grab"
               onClick={e => { e.stopPropagation(); onOpenDetail(task); }}
             >
               {task.title}
@@ -109,22 +109,22 @@ export default function TaskCard({ task, index, overloadedUserIds, onRequestMeet
 
           {/* Description */}
           {task.description ? (
-            <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+            <p className="text-xs text-gp-fl2 line-clamp-2 mt-1 leading-relaxed">
               {task.description}
             </p>
           ) : null}
 
           {/* Divider + metadata */}
-          <div className="border-t border-slate-50 pt-3 mt-1 flex flex-col gap-2">
+          <div className="border-t border-[rgba(22,25,22,0.06)] pt-3 mt-1 flex flex-col gap-2">
 
             {/* Team badge + due date + source tags */}
             <div className="flex items-center gap-1.5 flex-wrap">
               {teamName && (
-                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                <span className="text-xs bg-gp-cream text-gp-fl1 px-2 py-0.5 rounded-md font-medium">
                   {teamName}
                 </span>
               )}
-              <span className="text-xs text-slate-400">{formatDue(task.dueDate)}</span>
+              <span className="text-xs text-gp-fl3">{formatDue(task.dueDate)}</span>
               {task.fromMeeting && (
                 <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">
                   From Meeting
@@ -140,14 +140,14 @@ export default function TaskCard({ task, index, overloadedUserIds, onRequestMeet
             {/* Avatar stack + overload badge */}
             <div className="flex items-center justify-between gap-2">
               {assignees.length === 0 ? (
-                <span className="text-xs text-slate-300 italic">No assignees</span>
+                <span className="text-xs text-gp-fl3 italic">No assignees</span>
               ) : (
                 <div className="flex -space-x-1.5 overflow-hidden">
                   {assignees.map(u => (
                     <span
                       key={u.id}
                       title={u.name}
-                      className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center ring-2 ring-white shrink-0"
+                      className="w-6 h-6 rounded-full bg-gp-cream text-gp-midnight text-xs font-bold flex items-center justify-center ring-2 ring-white shrink-0"
                     >
                       {u.avatar}
                     </span>
