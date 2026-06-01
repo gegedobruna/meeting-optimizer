@@ -1,5 +1,6 @@
 export const COLUMNS = ["Backlog", "To Do", "In Progress", "Blocked", "Review", "Done"];
-export const WIP_LIMIT = 3; // applies only to "In Progress"
+export const WIP_LIMIT = 3;         // column-level advisory (In Progress column total)
+export const WORKER_WIP_LIMIT = 2;  // per-person max In Progress tasks
 
 export const ROLES = {
   ADMIN:       "ADMIN",

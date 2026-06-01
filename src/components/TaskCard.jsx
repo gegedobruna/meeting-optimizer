@@ -34,7 +34,7 @@ const getTeamName = (assignedUserIds) => {
   return TEAMS.find(t => t.memberIds.includes(assignedUserIds[0]))?.name ?? null;
 };
 
-export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
+export default function TaskCard({ task, index, overloadedUserIds, onRequestMeeting, onOpenDetail, onDelete, currentUser }) {
   const [showInput,    setShowInput]    = useState(false);
   const [reasonValue,  setReasonValue]  = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,6 +44,7 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
   const accent       = PRIORITY_ACCENT[task.priority] ?? 'border-l-4 border-l-slate-300';
   const pill         = PRIORITY_PILL[task.priority] ?? 'bg-slate-100 text-slate-500';
   const ring         = getEscalationRing(task);
+  const isOverloaded = (overloadedUserIds ?? []).some(uid => (task.assignedUserIds ?? []).includes(uid));
 
   const handleConfirm = (e) => {
     e.stopPropagation();
@@ -136,8 +137,8 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
               )}
             </div>
 
-            {/* Avatar stack */}
-            <div className="flex items-center justify-between">
+            {/* Avatar stack + overload badge */}
+            <div className="flex items-center justify-between gap-2">
               {assignees.length === 0 ? (
                 <span className="text-xs text-slate-300 italic">No assignees</span>
               ) : (
@@ -152,6 +153,11 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
                     </span>
                   ))}
                 </div>
+              )}
+              {isOverloaded && (
+                <span className="text-xs bg-orange-50 text-orange-600 border border-orange-100 px-1.5 py-0.5 rounded-full font-semibold shrink-0">
+                  ⚠ Overloaded
+                </span>
               )}
             </div>
           </div>

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { ROLES, TEAMS } from '../data/mockData';
 
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAY_NAMES   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -35,7 +36,6 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
   const weekEnd   = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
 
-  const myTasks    = tasks.filter(t => t.assignedUserIds?.includes(currentUser.id));
   const approved   = meetingRequests.filter(r => r.status === 'APPROVED');
 
   const isThisWeek = (iso) => {
@@ -51,14 +51,14 @@ function ScheduleView({ currentUser, tasks, meetingRequests }) {
   const weekMins       = weekMeetings.reduce((s, r) => s + (r.params?.durationMins ?? 0), 0);
 
   // Today / This week / Upcoming panels — tasks + meetings
-  const todayTasks     = myTasks.filter(t => t.dueDate?.startsWith(todayPfx));
-  const weekTasks      = myTasks.filter(t => t.dueDate && isThisWeek(new Date(t.dueDate)));
-  const upcomingTasks  = myTasks
+  const todayTasks     = tasks.filter(t => t.dueDate?.startsWith(todayPfx));
+  const weekTasks      = tasks.filter(t => t.dueDate && isThisWeek(new Date(t.dueDate)));
+  const upcomingTasks  = tasks
     .filter(t => t.dueDate && new Date(t.dueDate) > weekEnd)
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
   // Task deadlines (all with due date, sorted)
-  const deadlines = myTasks
+  const deadlines = tasks
     .filter(t => t.dueDate)
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
@@ -153,7 +153,6 @@ function GridView({ currentUser, tasks, meetingRequests }) {
   const [month,    setMonth]    = useState(today.getMonth());
   const [selected, setSelected] = useState(null);
 
-  const myTasks  = tasks.filter(t => t.assignedUserIds?.includes(currentUser.id));
   const approved = meetingRequests.filter(r => r.status === 'APPROVED');
 
   const toDatePrefix = (y, m, d) =>
@@ -165,7 +164,7 @@ function GridView({ currentUser, tasks, meetingRequests }) {
   const prevMonth = () => month === 0  ? (setYear(y => y-1), setMonth(11)) : setMonth(m => m-1);
   const nextMonth = () => month === 11 ? (setYear(y => y+1), setMonth(0))  : setMonth(m => m+1);
 
-  const tasksOnDay    = (d) => myTasks.filter(t => t.dueDate?.startsWith(toDatePrefix(year, month, d)));
+  const tasksOnDay    = (d) => tasks.filter(t => t.dueDate?.startsWith(toDatePrefix(year, month, d)));
   const meetingsOnDay = (d) => approved.filter(r => r.scheduledDate?.startsWith(toDatePrefix(year, month, d)));
 
   const selTasks    = selected ? tasksOnDay(selected)    : [];
@@ -259,6 +258,26 @@ function GridView({ currentUser, tasks, meetingRequests }) {
 export default function Calendar({ currentUser, tasks, meetingRequests }) {
   const [view, setView] = useState('schedule');
 
+  const isAdmin = currentUser.role === ROLES.ADMIN;
+  const isLead  = currentUser.role === ROLES.TEAM_LEAD;
+  const myTeam  = TEAMS.find(t => t.id === currentUser.teamId) ?? null;
+
+  // Scope tasks by role — meetings are always global (all approved)
+  const scopedTasks = useMemo(() => {
+    if (isAdmin) return tasks;
+    if (isLead && myTeam) return tasks.filter(t =>
+      (t.assignedUserIds ?? []).some(uid => myTeam.memberIds.includes(uid))
+    );
+    return tasks.filter(t => (t.assignedUserIds ?? []).includes(currentUser.id));
+  }, [tasks, isAdmin, isLead, myTeam, currentUser.id]);
+
+  const scheduleTitle = isAdmin ? 'Organization schedule' : isLead ? 'Team schedule' : 'Personal schedule';
+  const scheduleSubtitle = isAdmin
+    ? 'All approved meetings and deadlines across the organization.'
+    : isLead
+    ? 'Your team\'s approved meetings and upcoming deadlines.'
+    : 'See your approved meetings and upcoming deadlines in one place.';
+
   return (
     <div className="p-6 max-w-5xl mx-auto flex flex-col gap-6">
       {/* Header */}
@@ -266,12 +285,10 @@ export default function Calendar({ currentUser, tasks, meetingRequests }) {
         <div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Calendar</p>
           <h1 className="text-3xl font-bold text-slate-900">
-            {view === 'schedule' ? 'Personal schedule' : 'Calendar view'}
+            {view === 'schedule' ? scheduleTitle : 'Calendar view'}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            {view === 'schedule'
-              ? 'See your approved meetings and upcoming deadlines in one place.'
-              : 'Browse your tasks and meetings by date.'}
+            {view === 'schedule' ? scheduleSubtitle : 'Browse tasks and meetings by date.'}
           </p>
         </div>
 
@@ -301,8 +318,8 @@ export default function Calendar({ currentUser, tasks, meetingRequests }) {
       </div>
 
       {view === 'schedule'
-        ? <ScheduleView currentUser={currentUser} tasks={tasks} meetingRequests={meetingRequests} />
-        : <GridView     currentUser={currentUser} tasks={tasks} meetingRequests={meetingRequests} />
+        ? <ScheduleView currentUser={currentUser} tasks={scopedTasks} meetingRequests={meetingRequests} />
+        : <GridView     currentUser={currentUser} tasks={scopedTasks} meetingRequests={meetingRequests} />
       }
     </div>
   );

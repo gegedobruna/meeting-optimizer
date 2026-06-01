@@ -1,3 +1,5 @@
+import { TEAMS, USERS, WORKER_WIP_LIMIT } from '../data/mockData';
+
 const blockerHours = (task) =>
   task.blockedSince ? (Date.now() - new Date(task.blockedSince).getTime()) / 3_600_000 : 0;
 
@@ -10,6 +12,22 @@ export default function AgendaPanel({ tasks, showAgenda, setShowAgenda }) {
   const blocked   = tasks.filter(t => t.column === 'Blocked');
   const inReview  = tasks.filter(t => t.column === 'Review' || t.column === 'Done').length;
   const escalated = blocked.filter(t => blockerHours(t) >= 24).length;
+
+  // Per-user In Progress count for team capacity
+  const countByUser = {};
+  tasks.filter(t => t.column === 'In Progress').forEach(t => {
+    (t.assignedUserIds ?? []).forEach(uid => {
+      countByUser[uid] = (countByUser[uid] ?? 0) + 1;
+    });
+  });
+
+  const teamCapacity = TEAMS.map(team => {
+    const members     = team.memberIds.map(id => ({ id, count: countByUser[id] ?? 0 }));
+    const totalUsed   = members.reduce((s, m) => s + m.count, 0);
+    const totalMax    = members.length * WORKER_WIP_LIMIT;
+    const overloaded  = members.filter(m => m.count > WORKER_WIP_LIMIT).length;
+    return { team, totalUsed, totalMax, overloaded };
+  });
 
   // Collapsed state — small tab on the right edge
   if (!showAgenda) {
@@ -61,6 +79,33 @@ export default function AgendaPanel({ tasks, showAgenda, setShowAgenda }) {
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Escalated Blockers</p>
         <p className="text-3xl font-bold text-gray-900">{escalated}</p>
         <p className="text-xs text-gray-400 mt-0.5">Tasks blocked for 24+ hours</p>
+      </div>
+
+      {/* Team capacity */}
+      <div>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Team Capacity</p>
+        <div className="flex flex-col gap-2">
+          {teamCapacity.map(({ team, totalUsed, totalMax, overloaded }) => {
+            const pct    = totalMax > 0 ? Math.min((totalUsed / totalMax) * 100, 100) : 0;
+            const status = overloaded > 0 ? 'red' : pct >= 75 ? 'amber' : 'green';
+            const barCls = status === 'red' ? 'bg-red-400' : status === 'amber' ? 'bg-amber-400' : 'bg-green-400';
+            const txtCls = status === 'red' ? 'text-red-600' : status === 'amber' ? 'text-amber-600' : 'text-green-600';
+            return (
+              <div key={team.id} className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-gray-600 font-medium truncate">{team.name}</p>
+                  <span className={`text-xs font-semibold ${txtCls}`}>{totalUsed}/{totalMax}</span>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full transition-all ${barCls}`} style={{ width: `${pct}%` }} />
+                </div>
+                {overloaded > 0 && (
+                  <p className="text-xs text-red-500">{overloaded} worker{overloaded > 1 ? 's' : ''} over limit</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Blocked task watchlist */}
