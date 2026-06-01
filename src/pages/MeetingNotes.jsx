@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { USERS, COLUMNS } from '../data/mockData';
 
-const ACTION_RE = /^(\s*[-*]\s*\[[\s ]\]|TODO:|Action:)\s*/i;
-
 function parseActionItems(text) {
   return text
     .split('\n')
-    .filter(line => ACTION_RE.test(line.trim()))
-    .map(line => line.trim().replace(ACTION_RE, '').trim())
-    .filter(Boolean);
+    .map(line => line.trim())
+    .filter(line =>
+      line.length > 3 &&
+      !line.startsWith('#') &&
+      !line.match(/^[-–—]{3,}$/)
+    );
 }
 
 export default function MeetingNotes({ currentUser, addTask }) {
   const [notes, setNotes]   = useState('');
-  const [items, setItems]   = useState([]);  // [{ title, assigneeId, column, added }]
+  const [items, setItems]   = useState([]);  // [{ title, assigneeId, column, priority, added }]
   const [parsed, setParsed] = useState(false);
 
   const handleExtract = () => {
@@ -21,8 +22,9 @@ export default function MeetingNotes({ currentUser, addTask }) {
     setItems(titles.map(title => ({
       title,
       assigneeId: currentUser.id,
-      column: "To Do",
-      added: false,
+      column:     "To Do",
+      priority:   "Medium",
+      added:      false,
     })));
     setParsed(true);
   };
@@ -30,19 +32,22 @@ export default function MeetingNotes({ currentUser, addTask }) {
   const updateItem = (i, patch) =>
     setItems(prev => prev.map((it, idx) => idx === i ? { ...it, ...patch } : it));
 
+  const dismissItem = (i) =>
+    setItems(prev => prev.filter((_, idx) => idx !== i));
+
   const handleAdd = (i) => {
-    const it   = items[i];
-    const user = USERS.find(u => u.id === it.assigneeId);
+    const it = items[i];
     addTask({
-      id:             `t${Date.now()}-${i}`,
-      title:          it.title,
-      assignee:       user ? user.name : currentUser.name,
-      priority:       "Medium",
-      column:         it.column,
-      meetingRequest: null,
-      description:    "",
-      blockedSince:   null,
-      fromMeeting:    true,
+      id:              `t${Date.now()}-${i}`,
+      title:           it.title,
+      assignedUserIds: [it.assigneeId],
+      priority:        it.priority,
+      column:          it.column,
+      meetingRequest:  null,
+      description:     "",
+      blockedSince:    null,
+      dueDate:         null,
+      fromMeeting:     true,
     });
     updateItem(i, { added: true });
   };
@@ -54,16 +59,12 @@ export default function MeetingNotes({ currentUser, addTask }) {
       {/* Notes textarea */}
       <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col gap-3">
         <label className="text-xs text-gray-500 font-medium">
-          Paste your meeting notes below. Lines starting with{' '}
-          <code className="bg-gray-100 px-1 rounded">- [ ]</code>,{' '}
-          <code className="bg-gray-100 px-1 rounded">* [ ]</code>,{' '}
-          <code className="bg-gray-100 px-1 rounded">TODO:</code>, or{' '}
-          <code className="bg-gray-100 px-1 rounded">Action:</code> will be extracted.
+          Paste your notes below. Headings (lines starting with #) and dividers are automatically excluded.
         </label>
         <textarea
           className="border border-gray-200 rounded px-3 py-2 text-sm resize-none font-mono"
           rows={10}
-          placeholder={"Meeting notes...\n- [ ] Schedule design review\nTODO: Update changelog\nAction: Send summary to stakeholders"}
+          placeholder="Paste raw meeting notes here. Every line becomes an action item — dismiss the ones you don't need."
           value={notes}
           onChange={e => { setNotes(e.target.value); setParsed(false); setItems([]); }}
         />
@@ -71,7 +72,7 @@ export default function MeetingNotes({ currentUser, addTask }) {
           onClick={handleExtract}
           className="self-start bg-gray-900 hover:bg-gray-700 text-white text-sm rounded-lg px-5 py-2 font-medium"
         >
-          Extract Action Items
+          Parse Notes
         </button>
       </div>
 
@@ -79,18 +80,34 @@ export default function MeetingNotes({ currentUser, addTask }) {
       {parsed && (
         <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col gap-3">
           <h3 className="text-sm font-semibold text-gray-700">
-            {items.length === 0 ? 'No action items found.' : `${items.length} action item${items.length > 1 ? 's' : ''} found`}
+            {items.length === 0
+              ? 'No lines were extracted — make sure your notes contain at least one non-heading line.'
+              : `${items.length} action item${items.length > 1 ? 's' : ''} found`}
           </h3>
 
           {items.map((it, i) => (
-            <div key={i} className="border border-gray-100 rounded-lg p-3 flex flex-col gap-2 bg-gray-50">
-              {/* Title */}
-              <input
-                className="border border-gray-200 rounded px-2 py-1.5 text-sm w-full bg-white"
-                value={it.title}
-                onChange={e => updateItem(i, { title: e.target.value })}
-                disabled={it.added}
-              />
+            <div
+              key={i}
+              className={`border border-gray-100 rounded-lg p-3 flex flex-col gap-2 bg-gray-50 transition-opacity ${it.added ? 'opacity-50' : ''}`}
+            >
+              {/* Title row with dismiss button */}
+              <div className="flex items-center gap-2">
+                <input
+                  className="border border-gray-200 rounded px-2 py-1.5 text-sm flex-1 bg-white"
+                  value={it.title}
+                  onChange={e => updateItem(i, { title: e.target.value })}
+                  disabled={it.added}
+                />
+                {!it.added && (
+                  <button
+                    onClick={() => dismissItem(i)}
+                    className="text-gray-400 hover:text-gray-700 text-base leading-none px-1 shrink-0"
+                    title="Dismiss"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
 
               <div className="flex gap-2 items-center flex-wrap">
                 {/* Assignee */}
@@ -117,7 +134,19 @@ export default function MeetingNotes({ currentUser, addTask }) {
                   ))}
                 </select>
 
-                {/* Add button */}
+                {/* Priority */}
+                <select
+                  className="border border-gray-200 rounded px-2 py-1.5 text-xs bg-white"
+                  value={it.priority}
+                  onChange={e => updateItem(i, { priority: e.target.value })}
+                  disabled={it.added}
+                >
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+
+                {/* Add / Added */}
                 {it.added ? (
                   <span className="text-xs text-green-600 font-medium">Added ✓</span>
                 ) : (
