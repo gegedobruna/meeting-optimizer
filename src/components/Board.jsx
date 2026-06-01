@@ -74,7 +74,7 @@ export default function Board({ tasks, setTasks, showAgenda, setShowAgenda, curr
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex flex-row gap-4 overflow-x-auto p-6">
+        <div className={`flex flex-row gap-4 overflow-x-auto p-6 ${showAgenda ? 'pr-80' : ''}`}>
           {COLUMNS.map(columnName => (
             <Column
               key={columnName}
