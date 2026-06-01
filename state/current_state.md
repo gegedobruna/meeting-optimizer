@@ -1,6 +1,6 @@
 ---
 date: 2026-06-01
-last_change: Phase 2 complete — permission-gated drag-and-drop (toast on unauthorized move), conditional Create/Delete UI by role, read-only TaskDetailModal for non-owners, and blockedSince escalation indicators (yellow/orange/red+pulse) on Blocked cards.
+last_change: Phase 3 complete — meetingRules.js evaluator, MeetingRequests page (requester form with live verdict + approver table), MeetingNotes page (text parser → Board tasks with From Meeting badge), App.jsx wired with meetingRequests state and shared addTask.
 ---
 
 ## System Purpose

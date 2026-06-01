@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import Board from './components/Board';
 import Login from './components/Auth/Login';
 import Sidebar from './components/Layout/Sidebar';
+import MeetingRequests from './pages/MeetingRequests';
+import MeetingNotes from './pages/MeetingNotes';
 import { INITIAL_TASKS, USERS } from './data/mockData';
 import { loadFromStorage, saveToStorage } from './utils/storage';
 
 function App() {
-  const [tasks, setTasks] = useState(() => loadFromStorage("kanban_tasks", INITIAL_TASKS));
-  const [showAgenda, setShowAgenda] = useState(true);
-  const [activePage, setActivePage] = useState("board");
+  const [tasks, setTasks]                     = useState(() => loadFromStorage("kanban_tasks", INITIAL_TASKS));
+  const [meetingRequests, setMeetingRequests] = useState([]);
+  const [showAgenda, setShowAgenda]           = useState(true);
+  const [activePage, setActivePage]           = useState("board");
 
   const [currentUser, setCurrentUser] = useState(() => {
     const savedId = loadFromStorage("mo_current_user", null);
@@ -18,6 +21,8 @@ function App() {
   useEffect(() => {
     saveToStorage("kanban_tasks", tasks);
   }, [tasks]);
+
+  const addTask = (task) => setTasks(prev => [...prev, task]);
 
   const handleLogin = (user) => {
     saveToStorage("mo_current_user", user.id);
@@ -35,22 +40,39 @@ function App() {
   }
 
   const renderPage = () => {
-    if (activePage === "board") {
-      return (
-        <Board
-          tasks={tasks}
-          setTasks={setTasks}
-          showAgenda={showAgenda}
-          setShowAgenda={setShowAgenda}
-          currentUser={currentUser}
-        />
-      );
+    switch (activePage) {
+      case "board":
+        return (
+          <Board
+            tasks={tasks}
+            setTasks={setTasks}
+            showAgenda={showAgenda}
+            setShowAgenda={setShowAgenda}
+            currentUser={currentUser}
+          />
+        );
+      case "meeting-requests":
+        return (
+          <MeetingRequests
+            currentUser={currentUser}
+            meetingRequests={meetingRequests}
+            setMeetingRequests={setMeetingRequests}
+          />
+        );
+      case "meeting-notes":
+        return (
+          <MeetingNotes
+            currentUser={currentUser}
+            addTask={addTask}
+          />
+        );
+      default:
+        return (
+          <div className="p-8 text-gray-500 text-sm">
+            Page <span className="font-medium text-gray-700">{activePage}</span> — coming soon.
+          </div>
+        );
     }
-    return (
-      <div className="p-8 text-gray-500 text-sm">
-        Page <span className="font-medium text-gray-700">{activePage}</span> — coming soon.
-      </div>
-    );
   };
 
   return (

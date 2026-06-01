@@ -69,6 +69,12 @@ export default function TaskCard({ task, index, onRequestMeeting, onOpenDetail, 
 
           <div className="font-medium text-sm text-gray-900">{task.title}</div>
 
+          {task.fromMeeting && (
+            <span className="self-start text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">
+              From Meeting
+            </span>
+          )}
+
           {blockerBadge && (
             <div className="text-xs font-semibold text-red-600 mt-0.5">{blockerBadge}</div>
           )}
