@@ -1,4 +1,5 @@
 import { AGENDA_ITEMS } from '../data/mockData';
+import { getUsersByIds } from '../utils/users';
 
 export default function AgendaPanel({ tasks }) {
   const syncRequestedTasks = tasks.filter(t => t.meetingRequest !== null);
@@ -52,7 +53,9 @@ export default function AgendaPanel({ tasks }) {
         syncRequestedTasks.map(task => (
           <div key={task.id} className="border-l-4 border-orange-400 pl-2 py-1 mb-2">
             <div className="text-sm font-medium">{task.title}</div>
-            <div className="text-xs text-gray-500">{task.assignee}</div>
+            <div className="text-xs text-gray-500">
+              {getUsersByIds(task.assignedUserIds ?? []).map(u => u.name).join(', ') || 'Unassigned'}
+            </div>
             <div className="text-xs text-gray-600 italic">{task.meetingRequest}</div>
           </div>
         ))
