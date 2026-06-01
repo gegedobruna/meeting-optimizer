@@ -48,12 +48,12 @@ export const TEAMS = [
 ];
 
 export const NAV_ITEMS = [
-  { label:"Dashboard",        page:"dashboard",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"Board",            page:"board",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"My Tasks",         page:"my-tasks",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"Meeting Requests", page:"meeting-requests",  roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"Meeting Notes",    page:"meeting-notes",     roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"Calendar",         page:"calendar",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
-  { label:"Teams",            page:"teams",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
-  { label:"Analytics",        page:"analytics",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
+  { label:"Dashboard",        icon:"⊞", page:"dashboard",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Team Board",       icon:"▦", page:"board",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"My Tasks",         icon:"✓", page:"my-tasks",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Calendar",         icon:"📅", page:"calendar",          roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Teams",            icon:"👥", page:"teams",             roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
+  { label:"Meeting Requests", icon:"💬", page:"meeting-requests",  roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Meeting Notes",    icon:"📝", page:"meeting-notes",     roles:[ROLES.ADMIN, ROLES.TEAM_LEAD, ROLES.TEAM_MEMBER] },
+  { label:"Analytics",        icon:"📊", page:"analytics",         roles:[ROLES.ADMIN, ROLES.TEAM_LEAD] },
 ];
